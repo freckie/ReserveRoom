@@ -14,4 +14,4 @@ from api_app.resources.reservations import *
 
 api = Api(app)
 
-#api.add_resource(func, '/~')
+api.add_resource(GETRooms, '/rooms')

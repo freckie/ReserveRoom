@@ -1,20 +1,24 @@
 import sys
+import json
 
 from api_app.api import app, connect_db
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        port = sys.argv[1]
-    else:
-        port = 8080
+def load_config(filename):
+    config = {}
+    with open(filename, 'r', encoding='utf8') as f:
+        config = json.load(f)
+    return config
 
-    # connect_db({
-    #     'host': '13.125.227.113',
-    #     'port': 3306,
-    #     'user': 'newuser',
-    #     'db': 'reserveroom',
-    #     'passwd': 'password'
-    # })
+if __name__ == "__main__":
+    config_filename = './config.json'
+    if len(sys.argv) > 1:
+        config_filename = sys.argv[1]
+
+    # config
+    config = load_config(config_filename)
+
+    # DB connection
+    connect_db(config['db'])
 
     debug = True
-    app.run(debug=debug, host='0.0.0.0', port=port)
+    app.run(debug=debug, host='0.0.0.0', port=config['server']['port'])

@@ -7,18 +7,19 @@ from api_app.models.response import error_response, ok_response
 class GETRooms(Resource):
     def get(self):
         # Parse body params
-        # try:
-        #     parser = reqparse.RequestParser()
-        #     parser.add_argument('', required=False, type='', help='')
-        # except:
-        #     pass
-
+        try:
+            parser = reqparse.RequestParser()
+            parser.add_argument('', required=False, type='', help='')
+        except:
+            pass
+        print()
         # Querying
         query = '''
             SELECT C.name, R.id, R.capacity
             FROM classrooms R, colleges C
             WHERE R.college_id=C.id;
         '''
+        
         rows = app.db_driver.execute_all(query)
 
         # Fetch

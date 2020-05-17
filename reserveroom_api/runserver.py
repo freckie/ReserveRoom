@@ -1,14 +1,7 @@
 import sys
-from flask import Flask
-from flask_restful import Resource, Api
 
-# Initialize Flask instance
-app = Flask(__name__)
-api = Api(app)
+from api_app.api import app
 
-# Routing
-
-# Main
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         port = sys.argv[1]

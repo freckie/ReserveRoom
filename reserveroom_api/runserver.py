@@ -10,10 +10,11 @@ def load_config(filename):
     return config
 
 if __name__ == "__main__":
-    config_filename = './config.json'
     if len(sys.argv) > 1:
         config_filename = sys.argv[1]
-
+    else:
+        config_filename = './config.json'
+        
     # config
     config = load_config(config_filename)
 

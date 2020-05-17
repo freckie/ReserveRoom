@@ -27,9 +27,9 @@ class GETRooms(Resource):
         }
         for row in rows:
             result['rooms'].append({
-                'college': row[0],
-                'classroom_id': row[1],
-                'capacity': row[2]
+                'college': row['name'],
+                'classroom_id': row['id'],
+                'capacity': row['capacity']
             })
         
         return ok_response(result)

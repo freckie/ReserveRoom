@@ -9,17 +9,23 @@ class GETRooms(Resource):
         # Parse body params
         try:
             parser = reqparse.RequestParser()
-            parser.add_argument('', required=False, type='', help='')
+            parser.add_argument('college_id', required=False, type=int)
+            parser.add_argument('capacity', required=False, type=int)
+            args = parser.parse_args()
         except:
             pass
-        print()
+        _college_id = args['college_id']
+        _capacity = args['capacity']
+        print(_college_id)
+        print(_capacity)
         # Querying
         query = '''
             SELECT C.name, R.id, R.capacity
             FROM classrooms R, colleges C
-            WHERE R.college_id=C.id;
+            WHERE R.college_id=C.id
         '''
-        
+        query += 'AND R.college_id = ' + str(_college_id) + ' AND R.capacity > ' + str(_capacity * 2)
+
         rows = app.db_driver.execute_all(query)
 
         # Fetch

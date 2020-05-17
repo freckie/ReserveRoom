@@ -22,15 +22,17 @@ class GETRooms(Resource):
         rows = app.db_driver.execute_all(query)
 
         # Fetch
-        rooms = []
+        result = {
+            'rooms': []
+        }
         for row in rows:
-            rooms.append({
+            result['rooms'].append({
                 'college': row[0],
                 'classroom_id': row[1],
                 'capacity': row[2]
             })
         
-        return ok_response(rooms)
+        return ok_response(result)
 
 # GET /rooms/<room_id>
 class GETRoomsDetail(Resource):

@@ -30,6 +30,8 @@ api.add_resource(POSTSignup, '/auth/signup')
 
 # Rooms
 api.add_resource(GETRooms, '/rooms')
+api.add_resource(GETRoomsDetail, '/rooms/detail')
+api.add_resource(GETRoomsAvailable, '/rooms/available')
 
 # Reservations
 api.add_resource(GETReservations, '/reservations')

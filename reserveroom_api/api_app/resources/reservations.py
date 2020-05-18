@@ -9,7 +9,7 @@ class GETReservations(Resource):
 
     @jwt_required
     def get(self):
-        # Handle body parameters
+        # Handle query parameters
         params = {
             'user_email': None,
             'query': None
@@ -52,8 +52,8 @@ class GETReservations(Resource):
                 'college_name': row['college_name'],
                 'user_email': row['user_email'],
                 'user_name': row['user_name'],
-                'start_time': row['start_time'],
-                'end_time': row['end_time'],
+                'start_time': row['start_time'].strftime('%m-%d %H:%M'),
+                'end_time': row['end_time'].strftime('%m-%d %H:%M'),
                 'subject': row['subject']  
             })
         result['reservation_count'] = len(result['reservations'])

@@ -9,16 +9,36 @@ class GETReservations(Resource):
 
     @jwt_required
     def get(self):
-        # Handle body parameters
+        # Handle query parameters
+        params = {
+            'user_email': None,
+            'query': None
+        }
+        if 'user_email' in request.args:
+            params['user_email'] = request.args['user_email']
+        if 'query' in request.args:
+            params['query'] = request.args['query']
 
         # Querying
-        query = '''
-            SELECT R.id, R.classroom_id, C.id, C.name, R.user_email, U.name, R.start_time, R.end_Time, R.subject
-            FROM reservations R, users U, colleges C
+        _sql_email, _sql_query = '', ''
+        if params['user_email'] is not None:
+            _sql_email = ' AND R.user_email="{}" '.format(params['user_email'])
+        
+        if params['query'] is not None:
+            _sql_query = ' AND (R.subject LIKE "%{}%" OR U.name LIKE "%{}%") '.format(params['query'], params['query'])
+
+        sql = '''
+            SELECT R.id "id", R.classroom_id "classroom_id", CL.id "college_id", CL.name "college_name", 
+                R.user_email "user_email", U.name "user_name", R.start_time "start_time", R.end_Time "end_time", R.subject "subject"
+            FROM reservations R, users U, colleges CL, classrooms CR
             WHERE R.user_email=U.email
-                AND R.classroom_id=C.id;
-        '''
-        rows = app.db_driver.execute_all(query)
+                AND R.classroom_id=CR.id
+                AND CR.college_id=CL.id
+                {}
+                {}
+            ORDER BY id DESC;
+        '''.format(_sql_email, _sql_query)
+        rows = app.db_driver.execute_all(sql)
 
         result = {
             'reservation_count': 0,
@@ -26,16 +46,16 @@ class GETReservations(Resource):
         }
         for row in rows:
             result['reservations'].append({
-                'reservation_id': row['R.id'],
-                'classroom_id': row['R.classroom_id'],
-                'college_id': row['C.id'],
-                'college_name': row['C.name'],
-                'user_email': row['R.user_email'],
-                'user_name': row['U.name'],
-                'start_time': row['R.start_time'],
-                'end_time': row['R.end_time'],
-                'subject': row['R.subject']  
+                'reservation_id': row['id'],
+                'classroom_id': row['classroom_id'],
+                'college_id': row['college_id'],
+                'college_name': row['college_name'],
+                'user_email': row['user_email'],
+                'user_name': row['user_name'],
+                'start_time': row['start_time'].strftime('%m-%d %H:%M'),
+                'end_time': row['end_time'].strftime('%m-%d %H:%M'),
+                'subject': row['subject']  
             })
-        result['reservation_count'] = len(result['reservation'])
+        result['reservation_count'] = len(result['reservations'])
 
         return ok_response(result)

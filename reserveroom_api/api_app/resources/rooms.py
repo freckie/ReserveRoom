@@ -3,6 +3,9 @@ from flask_restful import Resource, reqparse, request
 from api_app.api import app
 from api_app.models.response import error_response, ok_response
 
+from api_app.utils import is_available
+
+import datetime as dt
 # GET /rooms
 class GETRooms(Resource):
     def get(self):
@@ -86,24 +89,29 @@ class GETRoomsAvailable(Resource):
         except:
             pass
         _room_id = args['room_id']
-        _start_time = args['start_time'].strptime('%Y-%m-%d %H:%M')
-        _end_time = args['end_time'].strptime('%Y-%m-%d %H:%M')
+        _start_time = dt.datetime.strptime(args['start_time'],'%Y-%m-%d %H:%M')
+        _end_time = dt.datetime.strptime(args['end_time'],'%Y-%m-%d %H:%M')
+
         # Querying
         query = '''
             SELECT start_time, end_time
             FROM reservations
             WHERE classroom_id = %s
         '''
-
+        targetTuple = (_start_time,_end_time)
+        timeList = []
         rows = app.db_driver.execute_all(query,(_room_id))
         for row in rows:
-            if ((_start_time > row['start_time']) and (_start_time < row['end_time'])) 
-            or ((_end_time < row['end_time']) and (_end_time > row['start_time']):
+            tmpList = []
+            for value in row.values():
+                tmpList.append(value)
+            timeList.append(tmpList)
+        available = is_available(timeList,targetTuple)
                 
          # Fetch
         result = {
-            'times': []
+            'available': []
         }
-        
+        result['available'] = available
         
         return ok_response(result)

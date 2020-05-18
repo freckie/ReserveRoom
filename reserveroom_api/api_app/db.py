@@ -13,25 +13,34 @@ class DB():
         )
         self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
     
-    def execute(self, query, args):
+    def execute(self, query, args=None):
         '''
         args: query params, must be tuple
         '''
-        self.cursor.execute(query, args)
+        if args is not None:
+            self.cursor.execute(query, args)
+        else:
+            self.cursor.execute(query)
 
-    def execute_one(self, query, args):
+    def execute_one(self, query, args=None):
         '''
         args: query params, must be tuple
         '''
-        self.cursor.execute(query, args)
+        if args is not None:
+            self.cursor.execute(query, args)
+        else:
+            self.cursor.execute(query)
         row = self.cursor.fetchone()
         return row
 
-    def execute_all(self, query, args):
+    def execute_all(self, query, args=None):
         '''
         args: query params, must be tuple
         '''
-        self.cursor.execute(query, args)
+        if args is not None:
+            self.cursor.execute(query, args)
+        else:
+            self.cursor.execute(query)
         row = self.cursor.fetchall()
         return row
 

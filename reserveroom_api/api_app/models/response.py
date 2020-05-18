@@ -5,7 +5,7 @@ def ok_response(data):
         'data': data
     }
 
-def error_response(msg, status):
+def error_response(status, msg):
     return {
         'status': status,
         'message': msg,

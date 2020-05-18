@@ -19,7 +19,7 @@ jwt_manager = JWTManager(app)
 # API
 from api_app.resources.auth import POSTSignin, POSTResetPW, POSTSignup
 from api_app.resources.rooms import *
-from api_app.resources.reservations import *
+from api_app.resources.reservations import GETReservations
 
 api = Api(app)
 
@@ -30,3 +30,6 @@ api.add_resource(POSTSignup, '/auth/signup')
 
 # Rooms
 api.add_resource(GETRooms, '/rooms')
+
+# Reservations
+api.add_resource(GETReservations, '/reservations')

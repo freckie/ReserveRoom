@@ -18,9 +18,10 @@ class DB():
         args: query params, must be tuple
         '''
         if args is not None:
-            self.cursor.execute(query, args)
+            result = self.cursor.execute(query, args)
         else:
-            self.cursor.execute(query)
+            result = self.cursor.execute(query)
+        return result
 
     def execute_one(self, query, args=None):
         '''

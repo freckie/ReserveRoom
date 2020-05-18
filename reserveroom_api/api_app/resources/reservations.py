@@ -1,3 +1,4 @@
+import datetime
 from flask_restful import Resource, request
 from flask_jwt_extended import jwt_required, get_jwt_claims
 
@@ -52,10 +53,52 @@ class GETReservations(Resource):
                 'college_name': row['college_name'],
                 'user_email': row['user_email'],
                 'user_name': row['user_name'],
-                'start_time': row['start_time'].strftime('%m-%d %H:%M'),
-                'end_time': row['end_time'].strftime('%m-%d %H:%M'),
+                'start_time': row['start_time'].strftime('%Y-%m-%d %H:%M'),
+                'end_time': row['end_time'].strftime('%Y-%m-%d %H:%M'),
                 'subject': row['subject']  
             })
         result['reservation_count'] = len(result['reservations'])
 
         return ok_response(result)
+
+# POST /reservations
+class POSTReservations(Resource):
+
+    @jwt_required
+    def post(self):
+        if not request.is_json:
+            return error_response(400, 'JSON 형식으로 전달해주세요.')
+
+        # Handle body parameters
+        try:
+            user_email = request.json.get('user_email', None)
+            start_time = request.json.get('start_time', None)
+            end_time = request.json.get('end_time', None)
+            classroom_id = request.json.get('classroom_id', None)
+            subject = request.json.get('subject', None)
+            if not user_email:
+                return error_response(400, 'user_email를 전달해주세요.')
+            if not start_time:
+                return error_response(400, 'start_time을 전달해주세요.')
+            else:
+                start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d %H:%M')
+            if not end_time:
+                return error_response(400, 'end_time을 전달해주세요.')
+            else:
+                end_time = datetime.datetime.strptime(end_time, '%Y-%m-%d %H:%M')
+            if not classroom_id:
+                return error_response(400, 'classroom_id를 전달해주세요.')
+            if not subject:
+                return error_response(400, 'subject를 전달해주세요.')
+        except Exception as exc:
+            return error_response(400, 'JSON 파싱 에러가 발생했습니다 : ' + str(exc))
+
+        # Querying
+        sql = 'INSERT INTO reservations (classroom_id, user_email, start_time, end_time, subject) VALUES (%s, %s, %s, %s, %s);'
+        try:
+            result = app.db_driver.execute(sql, (classroom_id, user_email, start_time, end_time, subject))
+            app.db_driver.commit()
+        except Exception as exc:
+            return error_response(500, str(exc))
+
+        return ok_response({'affected_rows': result})

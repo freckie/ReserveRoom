@@ -68,6 +68,8 @@ class POSTReservations(Resource):
     def post(self):
         if not request.is_json:
             return error_response(400, 'JSON 형식으로 전달해주세요.')
+        
+        claims = get_jwt_claims()
 
         # Handle body parameters
         try:
@@ -77,7 +79,7 @@ class POSTReservations(Resource):
             classroom_id = request.json.get('classroom_id', None)
             subject = request.json.get('subject', None)
             if not user_email:
-                return error_response(400, 'user_email를 전달해주세요.')
+                user_email = claims['email']
             if not start_time:
                 return error_response(400, 'start_time을 전달해주세요.')
             else:
@@ -102,3 +104,38 @@ class POSTReservations(Resource):
             return error_response(500, str(exc))
 
         return ok_response({'affected_rows': result})
+
+# DELETE /reservations/<reservation_id>
+class DELETEReservations(Resource):
+
+    @jwt_required
+    def delete(self, reservation_id):
+        claims = get_jwt_claims()
+
+        _reservation_id = int(reservation_id)
+
+        # Get target reservation
+        sql = 'SELECT count(user_email) "count", user_email FROM reservations WHERE id=%s;'
+        try:
+            result = app.db_driver.execute_one(sql, (_reservation_id))
+        except Exception as exc:
+            return error_response(404, "해당 예약 건을 찾을 수 없습니다. " + str(exc))
+        if result['count'] == 0:
+            return error_response(404, "해당 예약 건을 찾을 수 없습니다.")
+
+        # Check level
+        if claims['level'] != 9:
+            if claims['email'] != result['user_email']:
+                return error_response(403, "관리자 혹은 예약 당사자만 취소가 가능합니다.")
+
+        # Querying
+        sql = 'DELETE FROM reservations WHERE id=%s;'
+        try:
+            result = app.db_driver.execute(sql, (_reservation_id))
+            app.db_driver.commit()
+        except Exception as exc:
+            return error_response(500, str(exc))
+        if result != 1:
+            return error_response(500, "해당 요청 처리에 실패하였습니다.")
+        
+        return ok_response(None)

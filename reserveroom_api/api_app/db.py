@@ -14,14 +14,23 @@ class DB():
         self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
     
     def execute(self, query, args):
+        '''
+        args: query params, must be tuple
+        '''
         self.cursor.execute(query, args)
 
     def execute_one(self, query, args):
+        '''
+        args: query params, must be tuple
+        '''
         self.cursor.execute(query, args)
         row = self.cursor.fetchone()
         return row
 
     def execute_all(self, query, args):
+        '''
+        args: query params, must be tuple
+        '''
         self.cursor.execute(query, args)
         row = self.cursor.fetchall()
         return row

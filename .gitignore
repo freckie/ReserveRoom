@@ -1,6 +1,8 @@
 # our
-config.json
+reserveroom_api/config.json
 .vscode/
+reserveroom_web/node_modules
+reserveroom_web/dist
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

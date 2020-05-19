@@ -1,0 +1,12 @@
+{
+    "server": {
+        "port": 8000
+    },
+    "db": {
+        "host": "15.164.93.91",
+        "port": 3306,
+        "user": "root",
+        "passwd": "dasomDASOM",
+        "db": "reserveroom"
+    }
+}

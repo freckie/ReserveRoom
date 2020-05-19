@@ -6,6 +6,7 @@ from api_app.models.response import error_response, ok_response
 from api_app.utils import is_available
 
 import datetime as dt
+import itertools
 # GET /rooms
 class GETRooms(Resource):
     def get(self):
@@ -26,9 +27,30 @@ class GETRooms(Resource):
             FROM classrooms R, colleges C
             WHERE R.college_id=C.id
         '''
-        query += 'AND R.college_id = ' + str(_college_id) + ' AND R.capacity >= ' + str(_capacity * 2)
+        all_rows = app.db_driver.execute_all(query) 
 
+        query += 'AND R.college_id = ' + str(_college_id) + ' AND R.capacity >= ' + str(_capacity * 2)
         rows = app.db_driver.execute_all(query)
+
+
+        class_dict = {}
+        name_list = []
+        #호수별 인원수 저장
+        for row in all_rows:
+            if row['id'] not in class_dict:
+                class_dict[row['id']] = row['capacity']
+            name_list.append(row['id'])
+        #조합 구하기
+        class_combinations = itertools.combinations(name_list,2)
+        #조합별 인원수 계산 저장
+        comb_dict = {}
+        for combination in class_combinations:
+            comb_name = combination[0]+' '+combination[1]
+            if comb_name not in comb_dict:
+                tmp = int(class_dict[combination[0]]) + int(class_dict[combination[1]])
+                if tmp >= _capacity * 2:
+                    comb_dict[comb_name] = tmp
+        
 
         # Fetch
         result = {
@@ -38,9 +60,15 @@ class GETRooms(Resource):
             result['rooms'].append({
                 'college': row['name'],
                 'classroom_id': row['id'],
-                'capacity': row['capacity']
+                'capacity': str(int(row['capacity'])//2)
             })
-        
+        for row in comb_dict:
+            print(row)
+            result['rooms'].append({
+                'college' : '전자정보대학',
+                'classroom_id' : row,
+                'capacity' : str(comb_dict[row] // 2)
+            })
         return ok_response(result)
 
 # GET /rooms/detail

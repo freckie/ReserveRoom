@@ -1,7 +1,10 @@
 import bcrypt
 from datetime import timedelta
 from flask_restful import Resource, reqparse, request
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_claims
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_claims,
+    create_refresh_token, jwt_refresh_token_required
+)
 
 from api_app.api import app, jwt_manager
 from api_app.models.response import error_response, ok_response
@@ -45,11 +48,19 @@ class POSTSignin(Resource):
             'level': int(result['level'])
         }
         access_token = create_access_token(
-            email,
+            identity=email,
             expires_delta=timedelta(minutes=20),
-            user_claims=user_claims)
+            user_claims=user_claims
+        )
+        refresh_token = create_refresh_token(
+            identity=email,
+            user_claims=user_claims
+        )
 
-        return ok_response({'access_token': access_token})
+        return ok_response({
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        })
 
 # POST /auth/resetpw
 class POSTResetPW(Resource):
@@ -115,3 +126,19 @@ class POSTSignup(Resource):
             return error_response(500, str(exc))
 
         return ok_response(result)
+
+# POST /auth/refresh
+class POSTRefresh(Resource):
+
+    @jwt_refresh_token_required
+    def post(self):
+        user_claims = get_jwt_claims()
+        access_token = create_access_token(
+            identity=user_claims['email'],
+            expires_delta=timedelta(minutes=20),
+            user_claims=user_claims
+        )
+
+        return ok_response({
+            'access_token': access_token
+        })

@@ -2,6 +2,7 @@ import datetime
 from flask_restful import Resource, request
 from flask_jwt_extended import jwt_required, get_jwt_claims
 
+from api_app.utils import is_available
 from api_app.api import app, jwt_manager
 from api_app.models.response import error_response, ok_response
 

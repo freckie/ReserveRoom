@@ -17,7 +17,7 @@ from flask_jwt_extended import JWTManager
 jwt_manager = JWTManager(app)
 
 # API
-from api_app.resources.auth import POSTSignin, POSTResetPW, POSTSignup
+from api_app.resources.auth import POSTSignin, POSTResetPW, POSTSignup, POSTRefresh
 from api_app.resources.rooms import *
 from api_app.resources.reservations import GETReservations, POSTReservations, PUTReservations, DELETEReservations
 
@@ -27,6 +27,7 @@ api = Api(app)
 api.add_resource(POSTSignin, '/auth/signin')
 api.add_resource(POSTResetPW, '/auth/resetpw')
 api.add_resource(POSTSignup, '/auth/signup')
+api.add_resource(POSTRefresh, '/auth/refresh')
 
 # Rooms
 api.add_resource(GETRooms, '/rooms')

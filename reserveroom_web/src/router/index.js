@@ -1,11 +1,12 @@
-import Signin from '@/pages/Signin.vue'
-
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 // import store from '../store'
 
 import Home from '../views/Home.vue'
+
+import Signin from '@/pages/Signin.vue'
+import ResetPW from '@/pages/ResetPW.vue'
 
 Vue.use(VueRouter)
 
@@ -31,6 +32,11 @@ const routes = [
     path: '/signin',
     name: 'Signin',
     component: Signin
+  },
+  {
+    path: '/resetpw',
+    name: 'ResetPW',
+    component: ResetPW
   },
   {
     path: '/about',

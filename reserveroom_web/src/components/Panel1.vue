@@ -1,86 +1,89 @@
 <template>
   <div id="main-panel1">
-    <div id="control-tab-wrapper">
-      <v-card>
+    <v-card id="control-tab-wrapper">
 
-        <!-- Control Tabs (Header) -->
-        <v-tabs
-          v-model="controlPanel.tab"
-          id="control-tabs-header"
-          fixed-tabs
-          background-color="#891a2b"
-          dark
-        >
-          <v-tab>전체 강의실 조회</v-tab>
-          <v-tab>예약 건 보기</v-tab>
-        </v-tabs>
+      <!-- Control Tabs (Header) -->
+      <v-tabs
+        v-model="controlPanel.tab"
+        id="control-tabs-header"
+        fixed-tabs
+        background-color="#891a2b"
+        dark
+      >
+        <v-tab>전체 강의실 조회</v-tab>
+        <v-tab>예약 건 보기</v-tab>
+      </v-tabs>
 
-        <!-- Control Tabs (Items) -->
-        <v-tabs-items
-          v-model="controlPanel.tab"
-          class="control-tabs-item"
-        >
-          <!-- Tab 1 -->
-          <v-tab-item :key="controlPanel.tabKeys[0]">
-            <v-card flat>
-              <v-row>
-                <v-col class="d-flex" cols="2" sm="6">
-                  <v-select
-                    v-model="controlPanel.selectedCollege"
-                    :items="controlPanel.colleges"
-                    item-text="name"
-                    item-value="id"
-                    label="단과대학"
-                    hide-details="true"
-                    outlined
-                    dense
-                  ></v-select>
-                </v-col>
+      <!-- Control Tabs (Items) -->
+      <v-tabs-items
+        v-model="controlPanel.tab"
+        class="control-tabs-item"
+      >
+        <!-- Tab 1 -->
+        <v-tab-item :key="controlPanel.tabKeys[0]">
+          <v-card flat>
+            <v-row>
+              <v-col class="d-flex" cols="2" sm="6">
+                <v-select
+                  v-model="controlPanel.selectedCollege"
+                  :items="controlPanel.colleges"
+                  item-text="name"
+                  item-value="id"
+                  label="단과대학"
+                  hide-details="true"
+                  outlined
+                  dense
+                ></v-select>
+              </v-col>
 
-                <v-col class="d-flex" cols="2" sm="6">
-                  <v-select
-                    v-model="controlPanel.selectedDate"
-                    :items="controlPanel.dates"
-                    item-text="value"
-                    item-value="id"
-                    label="날짜"
-                    hide-details="true"
-                    outlined
-                    dense
-                  ></v-select>
-                </v-col>
+              <v-col class="d-flex" cols="2" sm="6">
+                <v-select
+                  v-model="controlPanel.selectedDate"
+                  :items="controlPanel.dates"
+                  item-text="value"
+                  item-value="id"
+                  label="날짜"
+                  hide-details="true"
+                  outlined
+                  dense
+                ></v-select>
+              </v-col>
 
-                <v-col class="d-flex" cols="2" sm="6">
-                  <v-text-field
-                    v-model="controlPanel.capacity"
-                    label="인원"
-                    hide-details="true"
-                    outlined
-                    dense
-                  >
-                  </v-text-field>
-                </v-col>
+              <v-col class="d-flex" cols="2" sm="6">
+                <v-text-field
+                  v-model="controlPanel.capacity"
+                  label="인원"
+                  hide-details="true"
+                  outlined
+                  dense
+                >
+                </v-text-field>
+              </v-col>
 
-                <v-col class="d-flex" cols="2" sm="6">
-                  <v-btn
-                    dense
-                    color="#891a2b"
-                    id="find-btn"
-                  >조회</v-btn>
-                </v-col>
-              </v-row>
-            </v-card>
-          </v-tab-item>
+              <v-col class="d-flex" cols="2" sm="6">
+                <v-btn
+                  dense
+                  color="#891a2b"
+                  id="find-btn"
+                >조회</v-btn>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-tab-item>
 
-          <!-- Tab 2 -->
-          <v-tab-item :key="controlPanel.tabKeys[1]">
-          </v-tab-item>
-        </v-tabs-items>
+        <!-- Tab 2 -->
+        <v-tab-item :key="controlPanel.tabKeys[1]">
+          <v-btn
+            dense
+            color="#891a2b"
+            id="find-btn2"
+          >조회</v-btn>
+        </v-tab-item>
+      </v-tabs-items>
 
-      </v-card>
-    </div> <!-- Control Panel End -->
+    </v-card> <!-- Control Panel End -->
 
-    <!-- Room Talbe -->
+    <!-- Room Table -->
     <v-card id="room-table">
       <v-simple-table>
         <template v-slot:default>
@@ -143,18 +146,38 @@ export default {
         capacity: null
       },
       rooms: [
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 },
-        { college: '전자정보대학', id: '전101', capacity: 30 }
+        { college: '전자정보대학', id: '전101', capacity: 60 },
+        { college: '전자정보대학', id: '전102', capacity: 60 },
+        { college: '전자정보대학', id: '전103', capacity: 60 },
+        { college: '전자정보대학', id: '전136', capacity: 82 },
+        { college: '전자정보대학', id: '전205', capacity: 202 },
+        { college: '전자정보대학', id: '전211-1', capacity: 97 },
+        { college: '전자정보대학', id: '전211-2', capacity: 37 },
+        { college: '전자정보대학', id: '전211-3', capacity: 18 },
+        { college: '전자정보대학', id: '전217', capacity: 40 },
+        { college: '전자정보대학', id: '전218', capacity: 40 },
+        { college: '전자정보대학', id: '전219', capacity: 40 },
+        { college: '전자정보대학', id: '전220', capacity: 90 },
+        { college: '전자정보대학', id: '전221', capacity: 40 },
+        { college: '전자정보대학', id: '전223', capacity: 40 },
+        { college: '전자정보대학', id: '전226', capacity: 90 },
+        { college: '전자정보대학', id: '전227', capacity: 78 },
+        { college: '전자정보대학', id: '전445', capacity: 82 },
+        { college: '전자정보대학', id: '전539', capacity: 50 },
+        { college: '전자정보대학', id: '전309', capacity: 22 },
+        { college: '전자정보대학', id: '전409', capacity: 22 },
+        { college: '전자정보대학', id: '전509', capacity: 22 },
+        { college: '전자정보대학', id: '전207', capacity: 24 },
+        { college: '전자정보대학', id: '전208', capacity: 24 },
+        { college: '전자정보대학', id: '전209', capacity: 24 },
+        { college: '전자정보대학', id: '전325-2', capacity: 30 },
+        { college: '전자정보대학', id: '전333', capacity: 24 },
+        { college: '전자정보대학', id: '전B01', capacity: 54 },
+        { college: '전자정보대학', id: '전B05', capacity: 40 },
+        { college: '전자정보대학', id: '전B06', capacity: 50 },
+        { college: '전자정보대학', id: '전B07', capacity: 42 },
+        { college: '전자정보대학', id: '전B09', capacity: 42 },
+        { college: '전자정보대학', id: '전B11', capacity: 42 }
       ]
     }
   }
@@ -162,28 +185,41 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#control-tab-wrapper {
-  width: 100%;
+#main-panel1 {
+  margin-left: 5px;
 
-  #control-tabs-header {
+  #control-tab-wrapper {
     width: 100%;
+    margin-bottom: 10px;
+
+    #control-tabs-header {
+      width: 100%;
+    }
+
+    .control-tabs-item {
+      padding: 0 5px;
+    }
+
+    #find-btn {
+      color: white;
+      height: 40px;
+    }
+
+    #find-btn2 {
+      color: white;
+      height: 40px;
+      width: 70%;
+      margin: 10px auto;
+    }
   }
 
-  .control-tabs-item {
-    padding: 0 5px;
-  }
+  #room-table {
+    margin-top: 5px;
+    margin-bottom: 10px;
 
-  #find-btn {
-    color: white;
-  }
-}
-
-#room-table {
-  margin-top: 5px;
-  margin-bottom: 10px;
-
-  .reserve-btn {
-    color: white;
+    .reserve-btn {
+      color: white;
+    }
   }
 }
 </style>

@@ -101,7 +101,7 @@
               :key="room.id"
             >
               <td>{{ room.college }}</td>
-              <td>{{ room.id }} 호</td>
+              <td>{{ room.id }}</td>
               <td>{{ room.capacity }} 명</td>
               <td>
                 <v-btn

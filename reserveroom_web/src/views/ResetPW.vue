@@ -11,43 +11,47 @@
     <v-form class="white-form" id="signin-form">
       <v-container>
         <v-row>
-          <v-col cols="12" md="4">
-            <v-text-field
-              v-model="email"
-              label="이메일"
-              required
-            >
-            </v-text-field>
-          </v-col>
-
-          <v-col cols="12" md="4">
+          <v-col>
             <v-text-field
               v-model="password"
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
-              label="비밀번호"
+              label="새로운 비밀번호"
               @click:append="showPassword = !showPassword"
               required
             >
             </v-text-field>
           </v-col>
         </v-row>
-        <v-btn depressed color="#891a2b" id="signin-btn">로그인</v-btn>
+
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="password2"
+              :append-icon="showPassword2 ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="showPassword2 ? 'text' : 'password'"
+              label="새로운 비밀번호 (확인)"
+              @click:append="showPassword2 = !showPassword2"
+              required
+            >
+            </v-text-field>
+          </v-col>
+        </v-row>
+        <v-btn depressed color="#891a2b" id="signin-btn">비밀번호 변경</v-btn>
       </v-container>
 
     </v-form>
 
     <!-- Tooltip Form -->
     <div class="white-form" id="tooltip-form">
-      초기 비밀번호는 <span style="color: #036eb8">1111</span> 입니다.
-      최초 로그인 후 변경해주세요.
+      비밀번호는 필수로 변경해주세요.
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Signin',
+  name: 'ResetPW',
   props: {
     imgLogo: {
       type: String,
@@ -56,9 +60,10 @@ export default {
   },
   data: () => {
     return {
-      email: '',
       password: '',
-      showPassword: false
+      password2: '',
+      showPassword: false,
+      showPassword2: false
     }
   }
 }

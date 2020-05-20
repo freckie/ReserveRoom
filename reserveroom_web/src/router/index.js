@@ -3,10 +3,12 @@ import VueRouter from 'vue-router'
 
 // import store from '../store'
 
+import MainLayout from '@/components/layouts/MainLayout.vue'
+
 import Home from '../views/Home.vue'
 
-import Signin from '@/pages/Signin.vue'
-import ResetPW from '@/pages/ResetPW.vue'
+import Signin from '@/views/Signin.vue'
+import ResetPW from '@/views/ResetPW.vue'
 
 Vue.use(VueRouter)
 
@@ -23,11 +25,11 @@ Vue.use(VueRouter)
 // }
 
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home
-  },
+  // {
+  //   path: '/',
+  //   name: 'Home',
+  //   component: Home
+  // },
   {
     path: '/signin',
     name: 'Signin',
@@ -37,6 +39,19 @@ const routes = [
     path: '/resetpw',
     name: 'ResetPW',
     component: ResetPW
+  },
+  /* Toolbar Layout */
+  {
+    path: '/',
+    component: MainLayout,
+    redirect: '/main',
+    children: [
+      {
+        path: '/main',
+        name: 'Home',
+        component: Home
+      }
+    ]
   },
   {
     path: '/about',

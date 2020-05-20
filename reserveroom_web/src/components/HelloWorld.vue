@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+    <Toolbar></Toolbar>
     <h1>{{ msg }}</h1>
     <p>
       For a guide and recipes on how to configure / customize this project,<br>
@@ -33,8 +34,13 @@
 </template>
 
 <script>
+import Toolbar from './Toolbar.vue'
+
 export default {
   name: 'HelloWorld',
+  components: {
+    Toolbar
+  },
   props: {
     msg: String
   }

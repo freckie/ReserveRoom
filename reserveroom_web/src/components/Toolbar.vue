@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar id="top-toolbar" fill-height align-center>
+  <v-toolbar id="top-toolbar" dense align-center>
     <!-- Back -->
     <v-btn icon>
       <v-icon>mdi-arrow-left</v-icon>
@@ -9,7 +9,7 @@
     <v-spacer></v-spacer>
     <v-toolbar-title>
       <div>
-        <img :src="imgLogo" width="70px" />
+        <img :src="imgLogo" width="50px" />
       </div>
     </v-toolbar-title>
     <v-spacer></v-spacer>
@@ -46,5 +46,6 @@ export default {
   position: fixed;
   top: 0;
   width: 100%;
+  z-index: 1000;
 }
 </style>

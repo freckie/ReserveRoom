@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <Toolbar />
-    <v-content>
+    <v-content id="content">
       <router-view></router-view>
     </v-content>
   </v-app>
@@ -18,5 +18,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+#content {
+  margin-top: 52px;
+}
 </style>

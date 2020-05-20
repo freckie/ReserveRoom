@@ -5,10 +5,10 @@ import VueRouter from 'vue-router'
 
 import MainLayout from '@/components/layouts/MainLayout.vue'
 
-import Home from '../views/Home.vue'
-
 import Signin from '@/views/Signin.vue'
 import ResetPW from '@/views/ResetPW.vue'
+
+import Main from '@/views/Main.vue'
 
 Vue.use(VueRouter)
 
@@ -25,11 +25,6 @@ Vue.use(VueRouter)
 // }
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'Home',
-  //   component: Home
-  // },
   {
     path: '/signin',
     name: 'Signin',
@@ -48,8 +43,8 @@ const routes = [
     children: [
       {
         path: '/main',
-        name: 'Home',
-        component: Home
+        name: 'Main',
+        component: Main
       }
     ]
   },

@@ -24,4 +24,5 @@ config = load_config(config_filename)
 app.db_driver = DB(config['db'])
 
 debug = False
+# app.run(debug=debug, host='0.0.0.0', port=config['server']['port'])
 app.run(debug=debug, host='0.0.0.0', port=config['server']['port'])

@@ -11,7 +11,7 @@
         dark
       >
         <v-tab>전체 강의실 조회</v-tab>
-        <v-tab>예약 건 보기</v-tab>
+        <v-tab>내 예약 현황 조회</v-tab>
       </v-tabs>
 
       <!-- Control Tabs (Items) -->
@@ -20,7 +20,7 @@
         class="control-tabs-item"
       >
         <!-- Tab 1 -->
-        <v-tab-item :key="controlPanel.tabKeys[0]">
+        <v-tab-item>
           <v-card flat>
             <v-row>
               <v-col class="d-flex" cols="2" sm="6">
@@ -72,7 +72,7 @@
         </v-tab-item>
 
         <!-- Tab 2 -->
-        <v-tab-item :key="controlPanel.tabKeys[1]">
+        <v-tab-item>
           <v-btn
             dense
             color="#891a2b"
@@ -87,15 +87,25 @@
     <v-card id="room-table">
       <v-simple-table>
         <template v-slot:default>
-          <thead>
+          <thead v-if="controlPanel.tab === 0">
             <tr>
               <th class="text-center">단과대학</th>
-              <th class="text-center">호&nbsp;수</th>
+              <th class="text-center">호 수</th>
               <th class="text-center">수용 가능 인원</th>
               <th class="text-center">&nbsp;</th>
             </tr>
           </thead>
-          <tbody>
+          <thead v-else>
+            <tr>
+              <th class="text-center">단과대학</th>
+              <th class="text-center">호 수</th>
+              <th class="text-center">날 짜</th>
+              <th class="text-center">과 목 명</th>
+              <th class="text-center">&nbsp;</th>
+            </tr>
+          </thead>
+
+          <tbody v-if="controlPanel.tab === 0">
             <tr
               v-for="room in rooms"
               :key="room.id"
@@ -108,8 +118,30 @@
                   color="#891a2b"
                   dense
                   class="reserve-btn"
+                  @click="getDetail(room)"
                 >
                   조회 및 예약 ▶
+                </v-btn>
+              </td>
+            </tr>
+          </tbody>
+          <tbody v-else>
+            <tr
+              v-for="(item, idx) in myReservations"
+              :key="idx"
+            >
+              <td>{{ item.college }}</td>
+              <td>{{ item.id }}</td>
+              <td>{{ item.date }}</td>
+              <td>{{ item.subject }}</td>
+              <td>
+                <v-btn
+                  color="#891a2b"
+                  dense
+                  class="reserve-btn"
+                  @click="getDetail(item)"
+                >
+                  상세 조회 ▶
                 </v-btn>
               </td>
             </tr>
@@ -127,8 +159,7 @@ export default {
   data: () => {
     return {
       controlPanel: {
-        tab: null,
-        tabKeys: ['tab1', 'tab2'],
+        tab: 0, // 0 or 1
         colleges: [
           { id: 1, name: '전자정보대학' },
           { id: 2, name: '멀티미디어관' },
@@ -145,6 +176,12 @@ export default {
         selectedDate: null,
         capacity: null
       },
+      myReservations: [
+        { college: '전자정보대학', id: '전101', date: '6/22 (월)', subject: '운영체제' },
+        { college: '전자정보대학', id: '전102', date: '6/22 (월)', subject: '운영체제' },
+        { college: '전자정보대학', id: '전211-2', date: '6/22 (월)', subject: '미분적분학' },
+        { college: '전자정보대학', id: '전211-2', date: '6/22 (월)', subject: '선형대수' }
+      ],
       rooms: [
         { college: '전자정보대학', id: '전101', capacity: 60 },
         { college: '전자정보대학', id: '전102', capacity: 60 },
@@ -179,6 +216,11 @@ export default {
         { college: '전자정보대학', id: '전B09', capacity: 42 },
         { college: '전자정보대학', id: '전B11', capacity: 42 }
       ]
+    }
+  },
+  methods: {
+    getDetail (room) {
+      window.scrollTo(0, 0)
     }
   }
 }

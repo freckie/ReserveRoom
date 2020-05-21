@@ -1,89 +1,117 @@
 <template>
-  <v-card id="main-panel2">
-    <!-- Timetable -->
+  <div id="main-panel2">
 
     <!-- Reservation Form -->
-    <v-form id="reservation-form">
-      <div class="form-title">
-        <span>새로운 예약</span>
-      </div>
-      <v-container>
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="reservation.subject"
-              label="과목명"
-              hide-details="true"
-              outlined
-              dense
+    <v-card class="panel2-card">
+      <v-toolbar color="#891a2b" dark>
+        <v-card-title>{{ roomData.id }}호 새로운 예약</v-card-title>
+      </v-toolbar>
+
+      <v-form id="reservation-form">
+        <v-container>
+          <v-row>
+            <v-col>
+              <v-text-field
+                v-model="reservation.subject"
+                label="과목명"
+                hide-details="true"
+                outlined
+                dense
+              >
+              </v-text-field>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col class="d-flex" cols="6">
+              <v-text-field
+                v-model="reservation.userName"
+                label="교수명"
+                hide-details="true"
+                outlined
+                dense
+              >
+              </v-text-field>
+            </v-col>
+
+            <v-col class="d-flex" cols="6">
+              <v-select
+                v-model="reservation.date"
+                :items="selectItems.dates"
+                item-text="value"
+                item-value="id"
+                label="날짜"
+                hide-details="true"
+                outlined
+                dense
+              ></v-select>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col class="d-flex" cols="6">
+              <v-select
+                v-model="reservation.startTime"
+                :items="selectItems.times"
+                item-text="value"
+                item-value="id"
+                label="시작 시간"
+                hide-details="true"
+                outlined
+                dense
+              ></v-select>
+            </v-col>
+
+            <v-col class="d-flex" cols="6">
+              <v-select
+                v-model="reservation.endTime"
+                :items="selectItems.times"
+                item-text="value"
+                item-value="id"
+                label="종료 시간"
+                hide-details="true"
+                outlined
+                dense
+              ></v-select>
+            </v-col>
+          </v-row>
+
+          <v-btn depressed color="#891a2b" id="ok-btn">신&nbsp;청</v-btn>
+        </v-container>
+
+      </v-form>
+    </v-card>
+
+    <!-- Timetable -->
+    <v-card class="panel2-card">
+      <v-toolbar color="#891a2b" dark>
+        <v-card-title>{{ roomData.id }}호 예약 현황</v-card-title>
+      </v-toolbar>
+
+      <!-- Reservations Table -->
+      <v-simple-table>
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th class="text-center">날짜</th>
+              <th class="text-center">시작 시간</th>
+              <th class="text-center">종료 시간</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(item, idx) in roomData.reservations"
+              :key="idx"
             >
-            </v-text-field>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-text-field
-              v-model="reservation.userName"
-              label="교수명"
-              hide-details="true"
-              outlined
-              dense
-            >
-            </v-text-field>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-select
-              v-model="reservation.date"
-              :items="selectItems.dates"
-              item-text="value"
-              item-value="id"
-              label="날짜"
-              hide-details="true"
-              outlined
-              dense
-            ></v-select>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-select
-              v-model="reservation.startTime"
-              :items="selectItems.times"
-              item-text="value"
-              item-value="id"
-              label="시작 시간"
-              hide-details="true"
-              outlined
-              dense
-            ></v-select>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col>
-            <v-select
-              v-model="reservation.endTime"
-              :items="selectItems.times"
-              item-text="value"
-              item-value="id"
-              label="종료 시간"
-              hide-details="true"
-              outlined
-              dense
-            ></v-select>
-          </v-col>
-        </v-row>
-
-        <v-btn depressed color="#891a2b" id="ok-btn">신&nbsp;청</v-btn>
-      </v-container>
-
-    </v-form>
-  </v-card>
+              <td>{{ item.date }}</td>
+              <td>{{ item.startTime }}</td>
+              <td>{{ item.endTime }}</td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -91,6 +119,16 @@ export default {
   name: 'Panel2',
   data: () => {
     return {
+      roomData: {
+        id: '전101',
+        reservations: [
+          { date: '6/22 (월)', startTime: '09 : 00', endTime: '10 : 00' },
+          { date: '6/22 (월)', startTime: '10 : 15', endTime: '10 : 30' },
+          { date: '6/22 (월)', startTime: '11 : 00', endTime: '13 : 00' },
+          { date: '6/22 (월)', startTime: '13 : 30', endTime: '14 : 45' },
+          { date: '6/22 (월)', startTime: '15 : 00', endTime: '16 : 45' }
+        ]
+      },
       reservation: {
         subject: null,
         userName: null,
@@ -135,19 +173,14 @@ export default {
 #main-panel2 {
 
   #reservation-form {
-    .form-title {
-      text-align: left;
-      margin-left: 10px;
-
-      span {
-        margin-top: 10px;
-        font-size: 1.3rem;
-      }
-    }
 
     #ok-btn {
       color: white;
     }
   }
+}
+
+.panel2-card {
+  margin-bottom: 10px;
 }
 </style>

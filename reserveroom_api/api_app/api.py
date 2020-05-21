@@ -1,15 +1,8 @@
-# Initialize Flask app
-from flask import Flask
-from flask_restful import Api
+import os
+import sys
 
-app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = 'reserveroom'
-
-# DB Connection
-from api_app.db import DB
-
-def connect_db(db_config):
-    app.db_driver = DB(db_config)
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from main import app
 
 # Flask JWT
 from flask_jwt_extended import JWTManager
@@ -17,6 +10,7 @@ from flask_jwt_extended import JWTManager
 jwt_manager = JWTManager(app)
 
 # API
+from flask_restful import Api
 from api_app.resources.auth import POSTSignin, POSTResetPW, POSTSignup, POSTRefresh
 from api_app.resources.rooms import *
 from api_app.resources.reservations import GETReservations, POSTReservations, PUTReservations, DELETEReservations

@@ -1,7 +1,13 @@
 import sys
 import json
 
-from api_app.api import app, connect_db
+# Initialize Flask app
+from flask import Flask
+
+app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'reserveroom'
+
+from api_app.db import DB
 
 def load_config(filename):
     config = {}
@@ -19,7 +25,7 @@ if __name__ == "__main__":
     config = load_config(config_filename)
 
     # DB connection
-    connect_db(config['db'])
+    app.db_driver = DB(config['db'])
 
     debug = True
     app.run(debug=debug, host='0.0.0.0', port=config['server']['port'])

@@ -1,5 +1,5 @@
 <template>
-  <div id="main-panel2">
+  <div id="a-main-panel2">
 
     <!-- Reservation Form -->
     <v-card class="panel2-card">
@@ -30,7 +30,6 @@
                 hide-details="true"
                 outlined
                 dense
-                disabled
               >
               </v-text-field>
             </v-col>
@@ -171,7 +170,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#main-panel2 {
+#a-main-panel2 {
 
   #reservation-form {
 

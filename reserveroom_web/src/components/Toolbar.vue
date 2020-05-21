@@ -10,6 +10,7 @@
     <v-toolbar-title>
       <div>
         <img :src="imgLogo" width="50px" />
+        <span v-if="admin" id="logo-admin">Admin</span>
       </div>
     </v-toolbar-title>
     <v-spacer></v-spacer>
@@ -17,7 +18,8 @@
     <!-- User Info -->
     <div id="toolbar-user-info">
       <v-icon>mdi-account-circle</v-icon>
-      <span>{{ user.name }} 교수님</span>
+      <span v-if="!admin">{{ user.name }} 교수님</span>
+      <span v-else>{{ user.name }} 관리자</span>
     </div>
   </v-toolbar>
 </template>
@@ -29,6 +31,10 @@ export default {
     imgLogo: {
       type: String,
       default: require('@/assets/khu-logo.png')
+    },
+    admin: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => {
@@ -47,5 +53,10 @@ export default {
   top: 0;
   width: 100%;
   z-index: 1000;
+
+  #logo-admin {
+    font-size: 0.825rem;
+    color: #891a2b;
+  }
 }
 </style>

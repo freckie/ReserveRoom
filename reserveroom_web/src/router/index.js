@@ -4,11 +4,13 @@ import VueRouter from 'vue-router'
 // import store from '../store'
 
 import MainLayout from '@/components/layouts/MainLayout.vue'
+import AdminMainLayout from '@/components/layouts/AdminMainLayout.vue'
 
 import Signin from '@/views/Signin.vue'
 import ResetPW from '@/views/ResetPW.vue'
 
 import Main from '@/views/Main.vue'
+import AdminMain from '@/views/AdminMain.vue'
 
 Vue.use(VueRouter)
 
@@ -37,14 +39,27 @@ const routes = [
   },
   /* Toolbar Layout */
   {
-    path: '/',
+    path: '/mymenu',
     component: MainLayout,
-    redirect: '/main',
+    redirect: '/mymenu/main',
     children: [
       {
-        path: '/main',
+        path: '/mymenu/main',
         name: 'Main',
         component: Main
+      }
+    ]
+  },
+  /* AdminToolbar Layout */
+  {
+    path: '/admin',
+    component: AdminMainLayout,
+    redirect: '/admin/main',
+    children: [
+      {
+        path: '/admin/main',
+        name: 'AdminMain',
+        component: AdminMain
       }
     ]
   }

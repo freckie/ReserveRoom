@@ -15,17 +15,13 @@ def load_config(filename):
         config = json.load(f)
     return config
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        config_filename = sys.argv[1]
-    else:
-        config_filename = './config.json'
-        
-    # config
-    config = load_config(config_filename)
+config_filename = './config.json'
 
-    # DB connection
-    app.db_driver = DB(config['db'])
+# config
+config = load_config(config_filename)
 
-    debug = True
-    app.run(debug=debug, host='0.0.0.0', port=config['server']['port'])
+# DB connection
+app.db_driver = DB(config['db'])
+
+debug = True
+app.run(debug=debug, host='0.0.0.0', port=config['server']['port'])

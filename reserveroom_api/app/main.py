@@ -7,7 +7,7 @@ from flask import Flask
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'reserveroom'
 
-from .api_app.db import DB
+from api_app.db import DB
 
 def load_config(filename):
     config = {}

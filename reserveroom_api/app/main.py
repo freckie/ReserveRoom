@@ -22,6 +22,7 @@ config = load_config(config_filename)
 
 # DB connection
 app.db_driver = DB(config['db'])
+app.config['SERVER_NAME'] = 'web.api'
 
 debug = False
 

@@ -1,5 +1,10 @@
-FROM tiangolo/uwsgi-nginx-flask:python3.7
+FROM python:3.6
 
-COPY ./app /app
+ADD . /www
+WORKDIR /www
 
-RUN pip3 install -r /app/requirements.txt
+RUN pip3 install -r ./requirements.txt &&
+    pip3 install uwsgi
+
+CMD uwsgi uwsgi.ini
+

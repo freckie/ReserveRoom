@@ -18,18 +18,18 @@ from api_app.resources.reservations import GETReservations, POSTReservations, PU
 api = Api(app)
 
 # Auth
-api.add_resource(POSTSignin, '/auth/signin')
-api.add_resource(POSTResetPW, '/auth/resetpw')
-api.add_resource(POSTSignup, '/auth/signup')
-api.add_resource(POSTRefresh, '/auth/refresh')
+api.add_resource(POSTSignin, '/api/auth/signin')
+api.add_resource(POSTResetPW, '/api/auth/resetpw')
+api.add_resource(POSTSignup, '/api/auth/signup')
+api.add_resource(POSTRefresh, '/api/auth/refresh')
 
 # Rooms
-api.add_resource(GETRooms, '/rooms')
-api.add_resource(GETRoomsDetail, '/rooms/detail')
-api.add_resource(GETRoomsAvailable, '/rooms/available')
+api.add_resource(GETRooms, '/api/rooms')
+api.add_resource(GETRoomsDetail, '/api/rooms/detail')
+api.add_resource(GETRoomsAvailable, '/api/rooms/available')
 
 # Reservations
-api.add_resource(GETReservations, '/reservations')
-api.add_resource(POSTReservations, '/reservations')
-api.add_resource(PUTReservations, '/reservations/<reservation_id>')
-api.add_resource(DELETEReservations, '/reservations/<reservation_id>')
+api.add_resource(GETReservations, '/api/reservations')
+api.add_resource(POSTReservations, '/api/reservations')
+api.add_resource(PUTReservations, '/api/reservations/<reservation_id>')
+api.add_resource(DELETEReservations, '/api/reservations/<reservation_id>')

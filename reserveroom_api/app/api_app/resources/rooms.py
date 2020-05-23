@@ -1,8 +1,7 @@
 from flask_restful import Resource, reqparse, request
+from flask import current_app as app
 
-from api_app.api import app
 from api_app.models.response import error_response, ok_response
-
 from api_app.utils import is_available
 
 import datetime as dt

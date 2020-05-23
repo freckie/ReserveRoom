@@ -6,7 +6,7 @@ from flask import Flask
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'reserveroom'
-app.config['SERVER_NAME'] = 'web.api'
+app.config['SERVER_NAME'] = '3.34.45.103'
 
 # config
 def load_config(filename):
@@ -33,4 +33,4 @@ build_api(app)
 debug = False
 
 if __name__ == "__main__":
-    app.run(debug=debug, host='web.api', port=config['server']['port'])
+    app.run(debug=debug, host='3.34.45.103', port=config['server']['port'])

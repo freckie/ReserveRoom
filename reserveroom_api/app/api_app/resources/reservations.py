@@ -66,7 +66,6 @@ class GETReservations(Resource):
         return ok_response(result)
 
 # POST /reservations
-
 class POSTReservations(Resource):
 
     @jwt_required
@@ -172,7 +171,24 @@ class PUTReservations(Resource):
                 return error_response(400, 'subject를 전달해주세요.')
         except Exception as exc:
             return error_response(400, 'JSON 파싱 에러가 발생했습니다 : ' + str(exc))
-
+        # is_available
+        sql = '''
+            SELECT start_time, end_time
+            FROM reservations
+            WHERE classroom_id = %s
+        '''
+        targetTuple = (start_time, end_time)
+        timeList = []
+        rows = app.db_driver.execute_all(sql,(classroom_id))
+        for row in rows:
+            tmpList = []
+            for value in row.values():
+                tmpList.append(value)
+            timeList.append(tmpList)
+        available = is_available(timeList,targetTuple)
+        if available == False:
+            return error_response(400, '예약 불가능한 시간입니다.')
+ 
         # Querying
         sql = 'UPDATE reservations SET start_time=%s, end_time=%s, classroom_id=%s, subject=%s WHERE id=%s;'
         try:
@@ -216,3 +232,53 @@ class DELETEReservations(Resource):
             return error_response(500, "해당 요청 처리에 실패하였습니다.")
         
         return ok_response(None)
+
+# POST /reservations2
+class POSTReservations2(Resource):
+
+    @jwt_required
+    @cross_origin()
+    def post(self):
+        if not request.is_json:
+            return error_response(400, 'JSON 형식으로 전달해주세요.')
+        
+        reserveList = request.json.get('reservations',None)
+        queryList = []
+
+        # check each reservation
+        for reserve in reserveList:
+            tmpEmail = reserve['user_email']
+            start_time = datetime.datetime.strptime(reserve['start_time'], '%Y-%m-%d %H:%M')
+            end_time = datetime.datetime.strptime(reserve['end_time'], '%Y-%m-%d %H:%M')
+            tmpTarget = (start_time,end_time)
+            print(tmpTarget)
+            tmpClassroom_id = reserve['classroom_id']
+            tmpSubject = reserve['subject']
+            tmpList = [tmpClassroom_id, tmpEmail, tmpTarget[0], tmpTarget[1], tmpSubject]
+            queryList.append(tmpList)
+            # is_available
+            sql = '''
+                SELECT start_time, end_time
+                FROM reservations
+                WHERE classroom_id = %s
+            '''
+            timeList = []
+            rows = app.db_driver.execute_all(sql,(tmpClassroom_id))
+            for row in rows:
+                tmpList = []
+                for value in row.values():
+                    tmpList.append(value)
+                timeList.append(tmpList)
+            available = is_available(timeList,tmpTarget)
+            if available == False:
+                return error_response(400, '예약 불가능한 시간입니다.')
+            # Insert Querying
+        sql = '''INSERT INTO reservations (classroom_id, user_email, start_time, end_time, subject) VALUES (%s,%s,%s,%s,%s),(%s,%s,%s,%s,%s);'''
+        try:
+            result = app.db_driver.execute(sql, (queryList[0][0], queryList[0][1], queryList[0][2], queryList[0][3], queryList[0][4],
+            queryList[1][0], queryList[1][1], queryList[1][2], queryList[1][3], queryList[1][4]))
+            app.db_driver.commit()
+        except Exception as exc:
+            return error_response(500, str(exc))
+
+        return ok_response({'affected_rows': result})

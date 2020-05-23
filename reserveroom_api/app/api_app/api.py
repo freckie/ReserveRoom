@@ -2,7 +2,7 @@
 from flask_restful import Api
 from api_app.resources.auth import POSTSignin, POSTResetPW, POSTSignup, POSTRefresh
 from api_app.resources.rooms import *
-from api_app.resources.reservations import GETReservations, POSTReservations, PUTReservations, DELETEReservations
+from api_app.resources.reservations import GETReservations, POSTReservations, POSTReservations2, PUTReservations, DELETEReservations
 
 def build_api(app):
     api = Api()
@@ -21,6 +21,7 @@ def build_api(app):
     # Reservations
     api.add_resource(GETReservations, '/api/reservations')
     api.add_resource(POSTReservations, '/api/reservations')
+    api.add_resource(POSTReservations2, '/api/reservations2')
     api.add_resource(PUTReservations, '/api/reservations/<reservation_id>')
     api.add_resource(DELETEReservations, '/api/reservations/<reservation_id>')
 

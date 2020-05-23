@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse, request
 from flask import current_app as app
+from flask_cors import cross_origin
 
 from api_app.models.response import error_response, ok_response
 from api_app.utils import is_available
@@ -8,6 +9,7 @@ import datetime as dt
 import itertools
 # GET /rooms
 class GETRooms(Resource):
+    @cross_origin()
     def get(self):
         # Parse body params
         try:
@@ -72,6 +74,7 @@ class GETRooms(Resource):
 
 # GET /rooms/detail
 class GETRoomsDetail(Resource):
+    @cross_origin()
     def get(self):
          # Parse body params
         try:
@@ -105,6 +108,7 @@ class GETRoomsDetail(Resource):
 
 # GET /rooms/available
 class GETRoomsAvailable(Resource):
+    @cross_origin()
     def get(self):
          # Parse body params
         try:

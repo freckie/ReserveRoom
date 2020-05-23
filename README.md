@@ -1,18 +1,19 @@
 # ReserveRoom
 KHU Classroom Reservation Service
 
-## Quickstart - API
-Python 3.6
-Windows 10
+## Quickstart
+Docker, Docker-Compose
 ```
 $ git clone https://github.com/freckie/reserveroom
 $ cd reserveroom
 
-$ pip install virtualenv
-$ virtualenv venv
-$ venv/scripts/activate
+$ cd nginx
+$ docker build --tag reserveroom_nginx .
+$ cd ..
 
-(venv) $ pip install -r requirements.txt
+$ cd reserveroom_api
+$ docker build --tag reserveroom_api .
+$ cd ..
 
-(venv) $ python reserveroom_api/runserver.py config.json
+$ docker-compose up -d
 ```

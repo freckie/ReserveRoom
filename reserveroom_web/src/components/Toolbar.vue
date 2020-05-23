@@ -19,7 +19,7 @@
     <div id="toolbar-user-info">
       <v-icon>mdi-account-circle</v-icon>
       <span v-if="!admin">{{ user.name }} 교수님</span>
-      <span v-else>{{ user.name }} 관리자</span>
+      <span v-else>{{ user.name }}</span>
     </div>
   </v-toolbar>
 </template>
@@ -37,11 +37,20 @@ export default {
       default: false
     }
   },
+  created () {
+    this.loadUserData()
+  },
   data: () => {
     return {
       user: {
-        name: '김명현'
+        name: ''
       }
+    }
+  },
+  methods: {
+    loadUserData () {
+      var user = this.$store.getters.getUserInfo
+      this.user.name = user.name
     }
   }
 }

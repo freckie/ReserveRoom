@@ -15,7 +15,7 @@ from flask import Flask
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'reserveroom'
-app.config['SERVER_NAME'] = '3.34.45.103:' + str(config['server']['port'])
+app.config['SERVER_NAME'] = '{}:{}'.format(config['server']['server_name'], str(config['server']['port']))
 
 # DB connection
 from api_app.db import DB

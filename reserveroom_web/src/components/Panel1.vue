@@ -163,9 +163,7 @@ export default {
       controlPanel: {
         tab: 0, // 0 or 1
         colleges: [
-          { id: 1, name: '전자정보대학' },
-          { id: 2, name: '멀티미디어관' },
-          { id: 3, name: '외국어대학' }
+          { id: 1, name: '전자정보대학' }
         ],
         dates: [
           { id: '2020-06-22', value: '6/22 (월)' },
@@ -184,40 +182,7 @@ export default {
         { college: '전자정보대학', id: '전211-2', date: '6/22 (월)', subject: '미분적분학' },
         { college: '전자정보대학', id: '전211-2', date: '6/22 (월)', subject: '선형대수' }
       ],
-      rooms: [
-        { college: '전자정보대학', id: '전101', capacity: 60 },
-        { college: '전자정보대학', id: '전102', capacity: 60 },
-        { college: '전자정보대학', id: '전103', capacity: 60 },
-        { college: '전자정보대학', id: '전136', capacity: 82 },
-        { college: '전자정보대학', id: '전205', capacity: 202 },
-        { college: '전자정보대학', id: '전211-1', capacity: 97 },
-        { college: '전자정보대학', id: '전211-2', capacity: 37 },
-        { college: '전자정보대학', id: '전211-3', capacity: 18 },
-        { college: '전자정보대학', id: '전217', capacity: 40 },
-        { college: '전자정보대학', id: '전218', capacity: 40 },
-        { college: '전자정보대학', id: '전219', capacity: 40 },
-        { college: '전자정보대학', id: '전220', capacity: 90 },
-        { college: '전자정보대학', id: '전221', capacity: 40 },
-        { college: '전자정보대학', id: '전223', capacity: 40 },
-        { college: '전자정보대학', id: '전226', capacity: 90 },
-        { college: '전자정보대학', id: '전227', capacity: 78 },
-        { college: '전자정보대학', id: '전445', capacity: 82 },
-        { college: '전자정보대학', id: '전539', capacity: 50 },
-        { college: '전자정보대학', id: '전309', capacity: 22 },
-        { college: '전자정보대학', id: '전409', capacity: 22 },
-        { college: '전자정보대학', id: '전509', capacity: 22 },
-        { college: '전자정보대학', id: '전207', capacity: 24 },
-        { college: '전자정보대학', id: '전208', capacity: 24 },
-        { college: '전자정보대학', id: '전209', capacity: 24 },
-        { college: '전자정보대학', id: '전325-2', capacity: 30 },
-        { college: '전자정보대학', id: '전333', capacity: 24 },
-        { college: '전자정보대학', id: '전B01', capacity: 54 },
-        { college: '전자정보대학', id: '전B05', capacity: 40 },
-        { college: '전자정보대학', id: '전B06', capacity: 50 },
-        { college: '전자정보대학', id: '전B07', capacity: 42 },
-        { college: '전자정보대학', id: '전B09', capacity: 42 },
-        { college: '전자정보대학', id: '전B11', capacity: 42 }
-      ]
+      rooms: []
     }
   },
   methods: {
@@ -231,6 +196,42 @@ export default {
         alert('조회 조건을 모두 세팅해주세요.')
         return
       }
+
+      this.rooms = []
+      var url = this.$store.getters.getHost + '/api/rooms'
+      var token = this.$store.getters.getAccessToken
+      var capacity = this.controlPanel.capacity.replace(/[^0-9]/g, '')
+      this.$http
+        .get(
+          url, {
+            params: {
+              college_id: Number(this.controlPanel.selectedCollege),
+              capacity: capacity
+            }
+          }, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+              'Content-Type': 'application/json'
+            }
+          })
+        .then(res => {
+          var rooms = res.data.data.rooms
+          if (rooms.length === 0) {
+            alert('검색 결과가 없습니다.')
+            return
+          }
+          rooms.forEach(element => {
+            this.rooms.push({
+              college: element.college,
+              id: element.classroom_id,
+              capacity: element.capacity
+            })
+          })
+        })
+        .catch(error => {
+          console.log(error.response)
+          alert('조회가 실패했습니다.')
+        })
 
       console.log(this.controlPanel)
     },

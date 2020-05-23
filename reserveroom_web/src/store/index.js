@@ -18,6 +18,9 @@ export default new Vuex.Store({
     })
   ],
   state: {
+    // for global constants.
+    host: resourceHost,
+    // state variables for Auth.
     accessToken: null,
     refreshToken: null,
     userEmail: null,
@@ -25,6 +28,9 @@ export default new Vuex.Store({
     userLevel: null
   },
   getters: {
+    getHost: state => {
+      return state.host
+    },
     getAccessToken: state => {
       return state.accessToken
     },
@@ -67,7 +73,7 @@ export default new Vuex.Store({
     LOGIN ({ commit }, { email, password }) {
       return axios
         .post(
-          `${resourceHost}/auth/signin`, {
+          `${resourceHost}/api/auth/signin`, {
             email: email,
             password: password
           }, {
@@ -98,11 +104,10 @@ export default new Vuex.Store({
     REFRESH ({ commit }, { refreshToken }) {
       return axios
         .post(
-          `${resourceHost}/auth/refresh`, {
-            refresh_token: refreshToken
-          }, {
+          `${resourceHost}/api/auth/refresh`, {}, {
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + refreshToken
             }
           }
         )

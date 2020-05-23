@@ -108,12 +108,12 @@ class POSTReservations(Resource):
         '''
         targetTuple = (start_time, end_time)
         timeList = []
-        rows = app.dp_driver.execute_all(query,(classroom_id))
+        rows = app.db_driver.execute_all(sql,(classroom_id))
         for row in rows:
             tmpList = []
             for value in row.values():
                 tmpList.append(value)
-            timeList.aappend(tmpList)
+            timeList.append(tmpList)
         available = is_available(timeList,targetTuple)
         if available == False:
             return error_response(400, '예약 불가능한 시간입니다.')

@@ -34,7 +34,14 @@
             </v-text-field>
           </v-col>
         </v-row>
-        <v-btn depressed color="#891a2b" id="signin-btn">로그인</v-btn>
+        <v-btn
+          depressed
+          color="#891a2b"
+          id="signin-btn"
+          @click="reqSignin"
+        >
+          로그인
+        </v-btn>
       </v-container>
 
     </v-form>
@@ -61,6 +68,36 @@ export default {
       email: '',
       password: '',
       showPassword: false
+    }
+  },
+  methods: {
+    reqSignin () {
+      if (this.email === '' || this.email === null || this.password === '' || this.password === null) {
+        alert('이메일과 비밀번호를 모두 입력해주세요.')
+        return
+      }
+
+      var email = this.email
+      var password = this.password
+      this.$store
+        .dispatch('LOGIN', { email, password })
+        .then(() => {
+          this.redirect()
+        })
+        .catch(({ message }) => {
+          console.log(message)
+          alert('로그인 실패!')
+        })
+    },
+    redirect () {
+      var user = this.$store.getters.getUserInfo()
+      if (user.level === 9) {
+        this.$router.push('/admin/main')
+      } else if (user.level === 1) {
+        this.$router.push('/mymenu/main')
+      } else {
+        this.$router.push('/auth/resetpw')
+      }
     }
   }
 }

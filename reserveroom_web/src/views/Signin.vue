@@ -15,6 +15,7 @@
             <v-text-field
               v-model="email"
               label="이메일"
+              v-on:keyup.enter="reqSignin"
               required
             >
             </v-text-field>
@@ -29,6 +30,7 @@
               :type="showPassword ? 'text' : 'password'"
               label="비밀번호"
               @click:append="showPassword = !showPassword"
+              v-on:keyup.enter="reqSignin"
               required
             >
             </v-text-field>
@@ -70,6 +72,9 @@ export default {
       showPassword: false
     }
   },
+  created () {
+    this.$store.dispatch('LOGOUT')
+  },
   methods: {
     reqSignin () {
       if (this.email === '' || this.email === null || this.password === '' || this.password === null) {
@@ -84,19 +89,23 @@ export default {
         .then(() => {
           this.redirect()
         })
-        .catch(({ message }) => {
-          console.log(message)
-          alert('로그인 실패!')
+        .catch((error) => {
+          console.log(error.response)
+          if (error.response.status === 401) {
+            alert('아이디 혹은 비밀번호가 잘못되었습니다.')
+          } else {
+            alert('로그인 실패!')
+          }
         })
     },
     redirect () {
-      var user = this.$store.getters.getUserInfo()
+      var user = this.$store.getters.getUserInfo
       if (user.level === 9) {
         this.$router.push('/admin/main')
       } else if (user.level === 1) {
         this.$router.push('/mymenu/main')
       } else {
-        this.$router.push('/auth/resetpw')
+        this.$router.push('/resetpw')
       }
     }
   }

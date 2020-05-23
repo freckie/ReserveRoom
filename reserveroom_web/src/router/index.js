@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-// import store from '../store'
+import store from '../store'
 
 import MainLayout from '@/components/layouts/MainLayout.vue'
 import AdminMainLayout from '@/components/layouts/AdminMainLayout.vue'
@@ -14,17 +14,29 @@ import AdminMain from '@/views/AdminMain.vue'
 
 Vue.use(VueRouter)
 
-// const requireAuth = () => (from, to, next) => {
-//   if (store.getters.getAccessToken !== null) {
-//     var refreshToken = store.getters.getRefreshToken
-//     store.dispatch('REFRESH', { refreshToken })
-//     return next()
-//   } else {
-//     console.log("Unauthorized.");
-//     alert("로그인이 필요한 서비스입니다.");
-//     next("/signin");
-//   }
-// }
+const requireAuth = () => (from, to, next) => {
+  if (store.getters.getAccessToken !== null) {
+    var refreshToken = store.getters.getRefreshToken
+    store.dispatch('REFRESH', { refreshToken })
+    return next()
+  } else {
+    console.log('Unauthorized.')
+    alert('로그인이 필요한 서비스입니다.')
+    next('/signin')
+  }
+}
+
+const onlyAdmin = () => (from, to, next) => {
+  if (store.getters.getAccessToken !== null) {
+    var refreshToken = store.getters.getRefreshToken
+    store.dispatch('REFRESH', { refreshToken })
+    return next()
+  } else {
+    console.log('Unauthenticated.')
+    alert('관리자만 접근이 가능한 메뉴입니다.')
+    next('/signin')
+  }
+}
 
 const routes = [
   {
@@ -39,7 +51,8 @@ const routes = [
   {
     path: '/resetpw',
     name: 'ResetPW',
-    component: ResetPW
+    component: ResetPW,
+    beforeEnter: requireAuth()
   },
   /* Toolbar Layout */
   {
@@ -50,7 +63,8 @@ const routes = [
       {
         path: '/mymenu/main',
         name: 'Main',
-        component: Main
+        component: Main,
+        beforeEnter: requireAuth()
       }
     ]
   },
@@ -63,7 +77,8 @@ const routes = [
       {
         path: '/admin/main',
         name: 'AdminMain',
-        component: AdminMain
+        component: AdminMain,
+        beforeEnter: onlyAdmin()
       }
     ]
   }

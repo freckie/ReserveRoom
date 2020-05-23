@@ -5,7 +5,7 @@ from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_claims,
     create_refresh_token, jwt_refresh_token_required
 )
-
+from flask_cors import cross_origin
 # from api_app.api import app, jwt_manager
 from api_app.models.response import error_response, ok_response
 
@@ -13,7 +13,7 @@ from flask import current_app as app
 
 # POST /auth/signin
 class POSTSignin(Resource):
-
+    @cross_origin()
     def post(self):
         if not request.is_json:
             return error_response(400, 'JSON 형식으로 전달해주세요.')
@@ -68,6 +68,7 @@ class POSTSignin(Resource):
 class POSTResetPW(Resource):
 
     @jwt_required
+    @cross_origin()
     def post(self):
         if not request.is_json:
             return error_response(400, 'JSON 형식으로 전달해주세요.')
@@ -103,7 +104,7 @@ class POSTResetPW(Resource):
 
 # POST /auth/signup
 class POSTSignup(Resource):
-
+    @cross_origin()
     def post(self):
         if not request.is_json:
             return error_response(400, 'JSON 형식으로 전달해주세요.')
@@ -133,6 +134,7 @@ class POSTSignup(Resource):
 class POSTRefresh(Resource):
 
     @jwt_refresh_token_required
+    @cross_origin()
     def post(self):
         user_claims = get_jwt_claims()
         access_token = create_access_token(

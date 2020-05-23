@@ -6,8 +6,10 @@ from flask_jwt_extended import (
     create_refresh_token, jwt_refresh_token_required
 )
 
-from api_app.api import app, jwt_manager
+# from api_app.api import app, jwt_manager
 from api_app.models.response import error_response, ok_response
+
+from flask import current_app as app
 
 # POST /auth/signin
 class POSTSignin(Resource):

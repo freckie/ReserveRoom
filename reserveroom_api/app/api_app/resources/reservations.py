@@ -2,6 +2,7 @@ import datetime
 from flask import current_app as app
 from flask_restful import Resource, request
 from flask_jwt_extended import jwt_required, get_jwt_claims
+from flask_cors import cross_origin
 
 from api_app.utils import is_available
 from api_app.models.response import error_response, ok_response
@@ -11,6 +12,7 @@ from api_app.models.response import error_response, ok_response
 class GETReservations(Resource):
 
     @jwt_required
+    @cross_origin()
     def get(self):
         # Handle query parameters
         params = {
@@ -64,9 +66,11 @@ class GETReservations(Resource):
         return ok_response(result)
 
 # POST /reservations
+
 class POSTReservations(Resource):
 
     @jwt_required
+    @cross_origin()
     def post(self):
         if not request.is_json:
             return error_response(400, 'JSON 형식으로 전달해주세요.')
@@ -96,8 +100,24 @@ class POSTReservations(Resource):
                 return error_response(400, 'subject를 전달해주세요.')
         except Exception as exc:
             return error_response(400, 'JSON 파싱 에러가 발생했습니다 : ' + str(exc))
-
-        # Querying
+        # is_available
+        sql = '''
+            SELECT start_time, end_time
+            FROM reservations
+            WHERE classroom_id = %s
+        '''
+        targetTuple = (start_time, end_time)
+        timeList = []
+        rows = app.db_driver.execute_all(sql,(classroom_id))
+        for row in rows:
+            tmpList = []
+            for value in row.values():
+                tmpList.append(value)
+            timeList.append(tmpList)
+        available = is_available(timeList,targetTuple)
+        if available == False:
+            return error_response(400, '예약 불가능한 시간입니다.')
+        # Insert Querying
         sql = 'INSERT INTO reservations (classroom_id, user_email, start_time, end_time, subject) VALUES (%s, %s, %s, %s, %s);'
         try:
             result = app.db_driver.execute(sql, (classroom_id, user_email, start_time, end_time, subject))
@@ -111,6 +131,7 @@ class POSTReservations(Resource):
 class PUTReservations(Resource):
 
     @jwt_required
+    @cross_origin()
     def put(self, reservation_id):
         claims = get_jwt_claims()
 
@@ -166,6 +187,7 @@ class PUTReservations(Resource):
 class DELETEReservations(Resource):
 
     @jwt_required
+    @cross_origin()
     def delete(self, reservation_id):
         claims = get_jwt_claims()
 

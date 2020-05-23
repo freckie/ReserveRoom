@@ -56,6 +56,7 @@
                   hide-details="true"
                   outlined
                   dense
+                  v-on:keyup.enter="getRoomsList"
                 >
                 </v-text-field>
               </v-col>
@@ -65,6 +66,7 @@
                   dense
                   color="#891a2b"
                   id="find-btn"
+                  @click="getRoomsList"
                 >조회</v-btn>
               </v-col>
             </v-row>
@@ -219,6 +221,19 @@ export default {
     }
   },
   methods: {
+    getRoomsList () {
+      if (
+        this.controlPanel.selectedCollege === null ||
+        this.controlPanel.selectedDate === null ||
+        this.controlPanel.capacity === null ||
+        this.controlPanel.capacity === 0
+      ) {
+        alert('조회 조건을 모두 세팅해주세요.')
+        return
+      }
+
+      console.log(this.controlPanel)
+    },
     getDetail (room) {
       window.scrollTo(0, 0)
     }

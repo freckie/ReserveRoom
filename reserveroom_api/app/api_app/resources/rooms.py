@@ -68,7 +68,6 @@ class GETRooms(Resource):
                 'capacity': str(int(row['capacity'])//2)
             })
         for row in comb_dict:
-            print(row)
             result['rooms'].append({
                 'college' : '전자정보대학',
                 'classroom_id' : row,

@@ -198,21 +198,22 @@ export default {
       }
 
       this.rooms = []
+      var capacity = this.controlPanel.capacity.replace(/[^0-9]/g, '')
+
       var url = this.$store.getters.getHost + '/api/rooms'
       var token = this.$store.getters.getAccessToken
-      var capacity = this.controlPanel.capacity.replace(/[^0-9]/g, '')
+      var headers = {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      }
       this.$http
         .get(
           url, {
             params: {
               college_id: Number(this.controlPanel.selectedCollege),
               capacity: capacity
-            }
-          }, {
-            headers: {
-              Authorization: 'Bearer ' + token,
-              'Content-Type': 'application/json'
-            }
+            },
+            headers: headers
           })
         .then(res => {
           var rooms = res.data.data.rooms

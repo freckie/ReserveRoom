@@ -187,8 +187,7 @@ export default {
           url, {
             params: {
               room_id: String(roomID)
-            }
-          }, {
+            },
             headers: {
               Authorization: 'Bearer ' + token,
               'Content-Type': 'application/json'
@@ -215,6 +214,10 @@ export default {
       console.log(month, day)
       if (month === '06') {
         switch (day) {
+          case '20':
+            return '(토)'
+          case '21':
+            return '(일)'
           case '22':
             return '(월)'
           case '23':
@@ -229,7 +232,7 @@ export default {
             return '(토)'
         }
       }
-      return '(모름)'
+      return ''
     }
   }
 }

@@ -3,20 +3,27 @@ from flask import g
 
 class DB():
     def __init__(self, db_config):
+        self.config = db_config
         self.db = pymysql.connect(
-            host=db_config['host'],
-            port=db_config['port'],
-            user=db_config['user'],
-            passwd=db_config['passwd'],
-            db=db_config['db'],
+            host=self.config['host'],
+            port=self.config['port'],
+            user=self.config['user'],
+            passwd=self.config['passwd'],
+            db=self.config['db'],
             charset='utf8'
         )
         self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
+
+    def reconnect(self):
+        if not self.db.open:
+            self.cursor.close()
+            self.__init__()
     
     def execute(self, query, args=None):
         '''
         args: query params, must be tuple
         '''
+        self.reconnect()
         if args is not None:
             result = self.cursor.execute(query, args)
         else:
@@ -27,6 +34,7 @@ class DB():
         '''
         args: query params, must be tuple
         '''
+        self.reconnect()
         if args is not None:
             self.cursor.execute(query, args)
         else:
@@ -38,6 +46,7 @@ class DB():
         '''
         args: query params, must be tuple
         '''
+        self.reconnect()
         if args is not None:
             self.cursor.execute(query, args)
         else:

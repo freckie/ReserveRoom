@@ -237,6 +237,7 @@ export default {
     },
     getDetail (room) {
       window.scrollTo(0, 0)
+      this.$emit('getDetailClickEvent', room.id)
     }
   }
 }

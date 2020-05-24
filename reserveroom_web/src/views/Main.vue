@@ -1,10 +1,14 @@
 <template>
   <div>
     <div id="panel1-wrapper">
-      <Panel1 />
+      <Panel1
+        @getDetailClickEvent="listenPanel1"
+      />
     </div>
     <div id="panel2-wrapper">
-      <Panel2 />
+      <Panel2
+        ref="panel2"
+      />
     </div>
   </div>
 </template>
@@ -18,6 +22,19 @@ export default {
   components: {
     Panel1,
     Panel2
+  },
+  data: () => {
+    return {
+      panel2Data: {
+        roomID: null
+      }
+    }
+  },
+  methods: {
+    listenPanel1 (roomID) {
+      this.panel2Data.roomID = roomID
+      this.$refs.panel2.loadRoomData(this.panel2Data.roomID)
+    }
   }
 }
 </script>

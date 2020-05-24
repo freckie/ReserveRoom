@@ -1,5 +1,5 @@
 <template>
-  <div id="main-panel2">
+  <div id="main-panel2" v-show="show">
 
     <!-- Reservation Form -->
     <v-card class="panel2-card">
@@ -120,14 +120,15 @@ export default {
   name: 'Panel2',
   data: () => {
     return {
+      show: false,
       roomData: {
-        id: '전101',
+        id: '',
         reservations: [
-          { date: '6/22 (월)', startTime: '09 : 00', endTime: '10 : 00' },
-          { date: '6/22 (월)', startTime: '10 : 15', endTime: '10 : 30' },
-          { date: '6/22 (월)', startTime: '11 : 00', endTime: '13 : 00' },
-          { date: '6/22 (월)', startTime: '13 : 30', endTime: '14 : 45' },
-          { date: '6/22 (월)', startTime: '15 : 00', endTime: '16 : 45' }
+          // { date: '6/22 (월)', startTime: '09 : 00', endTime: '10 : 00' },
+          // { date: '6/22 (월)', startTime: '10 : 15', endTime: '10 : 30' },
+          // { date: '6/22 (월)', startTime: '11 : 00', endTime: '13 : 00' },
+          // { date: '6/22 (월)', startTime: '13 : 30', endTime: '14 : 45' },
+          // { date: '6/22 (월)', startTime: '15 : 00', endTime: '16 : 45' }
         ]
       },
       reservation: {
@@ -151,9 +152,15 @@ export default {
     }
   },
   created () {
+    this.show = false
     this.createTimeItems()
   },
   methods: {
+    loadRoomData (roomID) {
+      this.roomData.id = roomID
+      this.show = true
+      this._loadRoomReservations(roomID)
+    },
     createTimeItems () {
       for (var i = 9; i < 20; i++) {
         var hh = ('00' + i).slice(-2)
@@ -165,6 +172,59 @@ export default {
           })
         }
       }
+    },
+    _loadRoomReservations (roomID) {
+      var url = this.$store.getters.getHost + '/api/rooms/detail'
+      var token = this.$store.getters.getAccessToken
+      this.roomData.reservations = []
+      this.$http
+        .get(
+          url, {
+            params: {
+              room_id: String(roomID)
+            }
+          }, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+              'Content-Type': 'application/json'
+            }
+          })
+        .then(res => {
+          var rooms = res.data.data.times
+          rooms.forEach(element => {
+            var dateTokens = element.start_time.split(' ')[0].split('-')
+            var date = dateTokens[1] + '/' + dateTokens[2] + ' ' + this._dateToday(dateTokens[1], dateTokens[2])
+            this.roomData.reservations.push({
+              date: date,
+              startTime: element.start_time,
+              endTime: element.end_time
+            })
+          })
+        })
+        .catch(error => {
+          console.log(error.response)
+          alert('조회가 실패했습니다.')
+        })
+    },
+    _dateToday (month, day) {
+      console.log(month, day)
+      if (month === '06') {
+        switch (day) {
+          case '22':
+            return '(월)'
+          case '23':
+            return '(화)'
+          case '24':
+            return '(수)'
+          case '25':
+            return '(목)'
+          case '26':
+            return '(금)'
+          case '27':
+            return '(토)'
+        }
+      }
+      return '(모름)'
     }
   }
 }

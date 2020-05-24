@@ -231,7 +231,7 @@ export default {
         })
         .catch(error => {
           console.log(error.response)
-          alert('조회가 실패했습니다.')
+          alert('조회가 실패했습니다. 다시 시도해주세요.')
         })
 
       console.log(this.controlPanel)

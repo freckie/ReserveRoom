@@ -247,6 +247,14 @@ export default {
           alert('예약 신청이 실패했습니다 : ' + error.response.data.message)
         })
     },
+    _clearForm () {
+      this.reservation.subject = null
+      this.reservation.startTime = null
+      this.reservation.endTime = null
+      this.reservation.userName = null
+      this.reservation.userEmail = null
+      this.reservation.date = null
+    },
     _loadRoomReservations (roomID) {
       var url = this.$store.getters.getHost + '/api/rooms/detail'
       var token = this.$store.getters.getAccessToken

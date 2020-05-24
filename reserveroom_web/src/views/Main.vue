@@ -33,6 +33,7 @@ export default {
   methods: {
     listenPanel1 (roomID) {
       this.panel2Data.roomID = roomID
+      this.$refs.panel2._clearForm()
       this.$refs.panel2.loadRoomData(this.panel2Data.roomID)
     }
   }

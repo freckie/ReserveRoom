@@ -17,7 +17,7 @@ class DB():
     def reconnect(self):
         if not self.db.open:
             self.cursor.close()
-            self.__init__()
+            self.__init__(self.config)
     
     def execute(self, query, args=None):
         '''

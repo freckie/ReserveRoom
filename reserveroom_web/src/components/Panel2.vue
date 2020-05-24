@@ -159,7 +159,13 @@ export default {
     loadRoomData (roomID) {
       this.roomData.id = roomID
       this.show = true
-      this._loadRoomReservations(roomID)
+      this.roomData.reservations = []
+
+      var roomIDs = roomID.split(' ')
+      console.log(roomIDs)
+      roomIDs.forEach(id => {
+        this._loadRoomReservations(id)
+      })
     },
     createTimeItems () {
       for (var i = 9; i < 20; i++) {
@@ -176,7 +182,6 @@ export default {
     _loadRoomReservations (roomID) {
       var url = this.$store.getters.getHost + '/api/rooms/detail'
       var token = this.$store.getters.getAccessToken
-      this.roomData.reservations = []
       this.$http
         .get(
           url, {

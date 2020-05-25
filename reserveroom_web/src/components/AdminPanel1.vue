@@ -75,12 +75,30 @@
 
         <!-- Tab 2 -->
         <v-tab-item>
-          <v-btn
-            dense
-            color="#891a2b"
-            id="find-btn2"
-            @click="getMyReservations"
-          >조회</v-btn>
+          <v-card flat>
+            <v-row style="margin: 0 auto">
+              <v-col class="d-flex" cols="6" sm="6">
+                <v-text-field
+                  v-model="controlPanel.query"
+                  label="검색어"
+                  hide-details="true"
+                  outlined
+                  dense
+                  v-on:keyup.enter="getMyReservations"
+                >
+                </v-text-field>
+              </v-col>
+
+              <v-col class="d-flex" cols="6" sm="6">
+                <v-btn
+                  dense
+                  color="#891a2b"
+                  id="find-btn2"
+                  @click="getMyReservations"
+                >조회</v-btn>
+              </v-col>
+            </v-row>
+          </v-card>
         </v-tab-item>
       </v-tabs-items>
 
@@ -100,10 +118,10 @@
           </thead>
           <thead v-else>
             <tr>
-              <th class="text-center">단과대학</th>
               <th class="text-center">호 수</th>
               <th class="text-center">날 짜</th>
               <th class="text-center">과 목 명</th>
+              <th class="text-center">교 수 명</th>
               <th class="text-center">&nbsp;</th>
             </tr>
           </thead>
@@ -133,10 +151,10 @@
               v-for="(item, idx) in myReservations"
               :key="idx"
             >
-              <td>{{ item.college }}</td>
               <td>{{ item.classroomID }}</td>
               <td>{{ item.date }}</td>
               <td>{{ item.subject }}</td>
+              <td>{{ item.userName }}</td>
               <td>
                 <v-btn
                   color="#891a2b"
@@ -184,7 +202,8 @@ export default {
         ],
         selectedCollege: null,
         selectedDate: null,
-        capacity: null
+        capacity: null,
+        query: null
       },
       myReservations: [],
       rooms: []
@@ -250,12 +269,16 @@ export default {
     getMyReservations () {
       var url = this.$store.getters.getHost + '/api/reservations'
       var token = this.$store.getters.getAccessToken
+      var query = this.controlPanel.query
       var headers = {
         Authorization: 'Bearer ' + token,
         'Content-Type': 'application/json'
       }
       this.$http
         .get(url, {
+          params: {
+            query: query
+          },
           headers: headers
         })
         .then(res => {
@@ -268,6 +291,7 @@ export default {
               reservationID: element.reservation_id,
               college: element.college_name,
               classroomID: element.classroom_id,
+              userName: element.user_name,
               date: date,
               subject: element.subject
             })
@@ -330,7 +354,7 @@ export default {
       color: white;
       height: 40px;
       width: 70%;
-      margin: 10px auto;
+      // margin: 10px auto;
     }
   }
 

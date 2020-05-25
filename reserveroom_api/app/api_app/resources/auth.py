@@ -6,9 +6,7 @@ from flask_jwt_extended import (
     create_refresh_token, jwt_refresh_token_required
 )
 from flask_cors import cross_origin
-# from api_app.api import app, jwt_manager
 from api_app.models.response import error_response, ok_response
-
 from flask import current_app as app
 
 # POST /auth/signin
@@ -136,13 +134,17 @@ class POSTRefresh(Resource):
     @jwt_refresh_token_required
     @cross_origin()
     def post(self):
+        rtoken = request.headers['Authorization'].split(' ')[1]
+
         user_claims = get_jwt_claims()
         access_token = create_access_token(
             identity=user_claims['email'],
             expires_delta=timedelta(minutes=20),
             user_claims=user_claims
         )
+        refresh_token = rtoken
 
         return ok_response({
-            'access_token': access_token
+            'access_token': access_token,
+            'refresh_token': refresh_token
         })

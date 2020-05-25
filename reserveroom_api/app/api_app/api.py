@@ -20,7 +20,7 @@ def build_api(app):
 
     # Reservations
     api.add_resource(GETReservations, '/api/reservations')
-    api.add_resource(GETReservations, '/api/reservations/<reservation_id>')
+    api.add_resource(GETReservationsDetail, '/api/reservations/<reservation_id>')
     api.add_resource(POSTReservations, '/api/reservations')
     api.add_resource(POSTReservations2, '/api/reservations2')
     api.add_resource(PUTReservations, '/api/reservations/<reservation_id>')

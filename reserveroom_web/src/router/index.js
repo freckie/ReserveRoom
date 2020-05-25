@@ -28,12 +28,19 @@ const requireAuth = () => (from, to, next) => {
 
 const onlyAdmin = () => (from, to, next) => {
   if (store.getters.getAccessToken !== null) {
-    var refreshToken = store.getters.getRefreshToken
-    store.dispatch('REFRESH', { refreshToken })
+    var user = store.getters.getUserInfo
+    if (user.level !== 9) {
+      console.log('Unauthenticated.')
+      alert('관리자만 접근이 가능한 메뉴입니다.')
+      next('/signin')
+    } else {
+      var refreshToken = store.getters.getRefreshToken
+      store.dispatch('REFRESH', { refreshToken })
+    }
     return next()
   } else {
-    console.log('Unauthenticated.')
-    alert('관리자만 접근이 가능한 메뉴입니다.')
+    console.log('Unauthorized.')
+    alert('로그인이 필요한 서비스입니다.')
     next('/signin')
   }
 }

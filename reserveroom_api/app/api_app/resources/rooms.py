@@ -89,14 +89,23 @@ class GETRoomsDetail(Resource):
         except:
             pass
         _room_id = args['room_id']
-        # Querying
-        query = '''
-            SELECT subject, start_time, end_time
-            FROM reservations
-            WHERE classroom_id = %s
-        '''
-        
-        rows = app.db_driver.execute_all(query,(_room_id))
+        roomList = list(_room_id.split())
+        # 1 room
+        if len(roomList) == 1:
+            query = '''
+                SELECT start_time, end_time
+                FROM reservations
+                WHERE classroom_id = %s
+            ''' 
+            rows = app.db_driver.execute_all(query,(_room_id))   
+        # 2 rooms
+        elif len(roomList) == 2:
+            query = '''
+                SELECT DISTINCT start_time, end_time
+                FROM reservations
+                WHERE classroom_id in (%s, %s)
+            '''
+            rows = app.db_driver.execute_all(query,(roomList[0],roomList[1]))
 
          # Fetch
         result = {
@@ -104,7 +113,6 @@ class GETRoomsDetail(Resource):
         }
         for row in rows:
             result['times'].append({
-                'subject': row['subject'],
                 'start_time': row['start_time'].strftime('%Y-%m-%d %H:%M'),
                 'end_time': row['end_time'].strftime('%Y-%m-%d %H:%M')
             })

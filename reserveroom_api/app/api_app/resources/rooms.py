@@ -96,6 +96,7 @@ class GETRoomsDetail(Resource):
                 SELECT start_time, end_time
                 FROM reservations
                 WHERE classroom_id = %s
+                ORDER BY start_time
             ''' 
             rows = app.db_driver.execute_all(query,(_room_id))   
         # 2 rooms
@@ -104,6 +105,7 @@ class GETRoomsDetail(Resource):
                 SELECT DISTINCT start_time, end_time
                 FROM reservations
                 WHERE classroom_id in (%s, %s)
+                ORDER BY start_time
             '''
             rows = app.db_driver.execute_all(query,(roomList[0],roomList[1]))
 

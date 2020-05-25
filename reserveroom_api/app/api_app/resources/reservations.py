@@ -73,7 +73,7 @@ class GETReservationsDetail(Resource):
     def get(self, reservation_id):
         # Querying
         sql = '''
-            SELECT R.id "reservation_id", R.classroom_id, U.name "user_name", R.start_time, R.end_time, R.subject
+            SELECT R.id "reservation_id", R.classroom_id, U.email "user_email", U.name "user_name", R.start_time, R.end_time, R.subject
             FROM reservations R, users U
             WHERE R.user_email=U.email
                 AND R.id=%s;
@@ -87,6 +87,7 @@ class GETReservationsDetail(Resource):
             'reservation_id': row['reservation_id'],
             'classroom_id': row['classroom_id'],
             'user_name': row['user_name'],
+            'user_email': row['user_email'],
             'start_time': row['start_time'].strftime('%Y-%m-%d %H:%M'),
             'end_time': row['end_time'].strftime('%Y-%m-%d %H:%M'),
             'subject': row['subject']  

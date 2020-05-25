@@ -199,11 +199,11 @@ class PUTReservations(Resource):
             if not origin_start_time:
                 return error_response(400, 'origin_start_time을 전달해주세요.')
             else:
-                origin_start_time = datetime.datetime.strptime(origin_start_time, '%Y-%m-%d %H:%M:%S')
+                origin_start_time = datetime.datetime.strptime(origin_start_time, '%Y-%m-%d %H:%M')
             if not origin_end_time:
                 return error_response(400, 'origin_end_time 전달해주세요.')
             else:
-                origin_end_time = datetime.datetime.strptime(origin_end_time, '%Y-%m-%d %H:%M:%S')
+                origin_end_time = datetime.datetime.strptime(origin_end_time, '%Y-%m-%d %H:%M')
             if not classroom_id:
                 return error_response(400, 'classroom_id를 전달해주세요.')
             if not subject:
@@ -217,7 +217,7 @@ class PUTReservations(Resource):
             WHERE classroom_id = %s
         '''
         targetTuple = (start_time, end_time)
-        originTuple = (origin_start_time, origin_end_time)
+        originTuple = [origin_start_time, origin_end_time]
         timeList = []
         rows = app.db_driver.execute_all(sql,(classroom_id))
         for row in rows:

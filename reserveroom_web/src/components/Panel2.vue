@@ -4,7 +4,8 @@
     <!-- Reservation Form -->
     <v-card class="panel2-card">
       <v-toolbar color="#891a2b" dark>
-        <v-card-title>{{ roomData.id }}호 새로운 예약</v-card-title>
+        <v-card-title v-if="mode==='new'">{{ roomData.id }}호 새로운 예약</v-card-title>
+        <v-card-title v-else>{{ roomData.id }}호 예약 수정</v-card-title>
       </v-toolbar>
 
       <v-form id="reservation-form">
@@ -77,19 +78,31 @@
             </v-col>
           </v-row>
 
+          <!-- Buttons -->
           <v-btn
+            v-if="mode==='new'"
             depressed
             color="#891a2b"
             id="ok-btn"
             @click="createReservation"
           >신&nbsp;청</v-btn>
+          <v-btn
+            v-else
+            depressed
+            color="#891a2b"
+            id="ok-btn"
+            @click="updateReservation"
+          >수&nbsp;정</v-btn>
         </v-container>
 
       </v-form>
     </v-card>
 
     <!-- Timetable -->
-    <v-card class="panel2-card">
+    <v-card
+      class="panel2-card"
+      v-show="mode==='new'"
+    >
       <v-toolbar color="#891a2b" dark>
         <v-card-title>{{ roomData.id }}호 예약 현황</v-card-title>
       </v-toolbar>
@@ -126,9 +139,9 @@ export default {
   data: () => {
     return {
       show: false,
+      mode: 'new', // 'new' or 'update'
       roomData: {
         id: '',
-        count: 1,
         reservations: []
       },
       reservation: {
@@ -137,7 +150,12 @@ export default {
         userEmail: null,
         date: null,
         startTime: null,
-        endTime: null
+        endTime: null,
+        reservationID: null, // for update
+        origin: { // for update
+          startTime: null,
+          endTime: null
+        }
       },
       selectItems: {
         dates: [
@@ -160,18 +178,26 @@ export default {
       // Load Room Metadata
       this.roomData.id = roomID
       this.show = true
-      this.roomData.reservations = []
+      this.mode = 'new'
 
-      var roomIDs = roomID.split(' ')
-      roomIDs.forEach(id => {
-        this._loadRoomReservations(id)
-      })
-      this.roomData.count = roomIDs.length
+      this._loadRoomReservations(roomID)
 
       // Load User Info
       var user = this.$store.getters.getUserInfo
       this.reservation.userName = user.name
       this.reservation.userEmail = user.email
+    },
+    loadMyReservationData (reservationID) {
+      // Load Reservation Metadata
+      this._loadMyReservation(reservationID)
+
+      // Load User Info
+      var user = this.$store.getters.getUserInfo
+      this.reservation.userName = user.name
+      this.reservation.userEmail = user.email
+
+      this.show = true
+      this.mode = 'update'
     },
     createTimeItems () {
       for (var i = 9; i < 20; i++) {
@@ -218,12 +244,24 @@ export default {
       // Reserve two rooms
       } else {
         url = url + '/api/reservations2'
+        var ids = this.roomData.id.split(' ')
         params = {
-          user_email: this.reservation.userEmail,
-          classroom_id: this.roomData.id,
-          start_time: this.reservation.date + ' ' + this.reservation.startTime,
-          end_time: this.reservation.date + ' ' + this.reservation.endTime,
-          subject: this.reservation.subject
+          reservations: [
+            {
+              user_email: this.reservation.userEmail,
+              classroom_id: ids[0],
+              start_time: this.reservation.date + ' ' + this.reservation.startTime,
+              end_time: this.reservation.date + ' ' + this.reservation.endTime,
+              subject: this.reservation.subject
+            },
+            {
+              user_email: this.reservation.userEmail,
+              classroom_id: ids[1],
+              start_time: this.reservation.date + ' ' + this.reservation.startTime,
+              end_time: this.reservation.date + ' ' + this.reservation.endTime,
+              subject: this.reservation.subject
+            }
+          ]
         }
       }
 
@@ -239,12 +277,63 @@ export default {
           })
         .then(res => {
           alert('예약 신청이 성공했습니다.')
-          this.roomData.reservations = []
           this._loadRoomReservations(this.roomData.id)
         })
         .catch(error => {
           console.log(error.response)
           alert('예약 신청이 실패했습니다 : ' + error.response.data.message)
+        })
+    },
+    updateReservation () {
+      // Check all parameters valid
+      if (
+        this.reservation.subject === '' || this.reservation.subject === null ||
+        this.reservation.startTime === '' || this.reservation.startTime === null ||
+        this.reservation.endTime === '' || this.reservation.endTime === null ||
+        this.reservation.date === '' || this.reservation.date === null
+      ) {
+        alert('입력이 제대로 됐는지 다시 확인 부탁드립니다.')
+        return
+      }
+
+      // Check time is valid
+      if (!this._checkTimeValidation(this.reservation.startTime, this.reservation.endTime)) {
+        alert('시간 입력이 잘못되었습니다.')
+        return
+      }
+
+      // Update reservations
+      var params = {}
+      var url = this.$store.getters.getHost
+      url = url + '/api/reservations/' + this.reservation.reservationID
+      params = {
+        classroom_id: this.roomData.id,
+        start_time: this.reservation.date + ' ' + this.reservation.startTime,
+        end_time: this.reservation.date + ' ' + this.reservation.endTime,
+        origin_start_time: this.reservation.date + ' ' + this.reservation.origin.startTime,
+        origin_end_time: this.reservation.date + ' ' + this.reservation.origin.endTime,
+        subject: this.reservation.subject
+      }
+
+      // Request
+      var token = this.$store.getters.getAccessToken
+      this.$http
+        .put(
+          url, params, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+              'Content-Type': 'application/json'
+            }
+          })
+        .then(res => {
+          alert('기존 예약 수정이 성공했습니다.')
+          this._loadRoomReservations(this.roomData.id)
+        })
+        .catch(error => {
+          console.log(error.response)
+          alert('기존 예약 수정이 실패했습니다 : ' + error.response.data.message)
+          this._clearForm()
+          this._loadMyReservation(this.reservation.reservationID)
         })
     },
     _clearForm () {
@@ -255,7 +344,15 @@ export default {
       this.reservation.userEmail = null
       this.reservation.date = null
     },
+    _hidePanel2 () {
+      this.show = false
+    },
+    _changeMode (mode) {
+      this.mode = mode
+    },
     _loadRoomReservations (roomID) {
+      this.roomData.reservations = []
+
       var url = this.$store.getters.getHost + '/api/rooms/detail'
       var token = this.$store.getters.getAccessToken
       this.$http
@@ -284,6 +381,34 @@ export default {
         .catch(error => {
           console.log(error.response)
           alert('조회가 실패했습니다. 다시 시도해주세요.')
+        })
+      return roomID
+    },
+    _loadMyReservation (reservationID) {
+      // Load Reservation Metadata
+      var url = this.$store.getters.getHost + '/api/reservations/' + reservationID
+      var token = this.$store.getters.getAccessToken
+      this.$http
+        .get(url, {
+          headers: {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(res => {
+          var data = res.data.data.reservation
+          this.roomData.id = data.classroom_id
+          this.reservation.subject = data.subject
+          this.reservation.date = data.start_time.split(' ')[0]
+          this.reservation.startTime = data.start_time.split(' ')[1]
+          this.reservation.endTime = data.end_time.split(' ')[1]
+          this.reservation.reservationID = reservationID
+          this.reservation.origin.startTime = this.reservation.startTime
+          this.reservation.origin.endTime = this.reservation.endTime
+        })
+        .catch(error => {
+          console.log(error.response)
+          alert('조회가 실패했습니다. : ' + error.response.data.message)
         })
     },
     _dateToDay (month, day) {

@@ -2,7 +2,9 @@
   <div>
     <div id="panel1-wrapper">
       <Panel1
-        @getDetailClickEvent="listenPanel1"
+        @getPanel2HideEvent="listenToPanel2Hide"
+        @getDetailClickEvent="listenToPanel1Detail"
+        @getReservationDetailClickEvent="listenToPanel1ReservationDetail"
       />
     </div>
     <div id="panel2-wrapper">
@@ -26,15 +28,25 @@ export default {
   data: () => {
     return {
       panel2Data: {
-        roomID: null
+        roomID: null,
+        reservationID: null
       }
     }
   },
   methods: {
-    listenPanel1 (roomID) {
+    listenToPanel1Detail (roomID) {
       this.panel2Data.roomID = roomID
       this.$refs.panel2._clearForm()
       this.$refs.panel2.loadRoomData(this.panel2Data.roomID)
+    },
+    listenToPanel1ReservationDetail (reservationID) {
+      this.panel2Data.reservationID = reservationID
+      this.$refs.panel2._clearForm()
+      this.$refs.panel2._changeMode('update')
+      this.$refs.panel2.loadMyReservationData(this.panel2Data.reservationID)
+    },
+    listenToPanel2Hide () {
+      this.$refs.panel2._hidePanel2()
     }
   }
 }

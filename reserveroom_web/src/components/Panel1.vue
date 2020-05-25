@@ -4,7 +4,7 @@
 
       <!-- Control Tabs (Header) -->
       <v-tabs
-        v-model="controlPanel.tab"
+        v-model="tabID"
         id="control-tabs-header"
         fixed-tabs
         background-color="#891a2b"
@@ -16,7 +16,7 @@
 
       <!-- Control Tabs (Items) -->
       <v-tabs-items
-        v-model="controlPanel.tab"
+        v-model="tabID"
         class="control-tabs-item"
       >
         <!-- Tab 1 -->
@@ -79,6 +79,7 @@
             dense
             color="#891a2b"
             id="find-btn2"
+            @click="getMyReservations"
           >조회</v-btn>
         </v-tab-item>
       </v-tabs-items>
@@ -89,7 +90,7 @@
     <v-card id="room-table">
       <v-simple-table>
         <template v-slot:default>
-          <thead v-if="controlPanel.tab === 0">
+          <thead v-if="tabID === 0">
             <tr>
               <th class="text-center">단과대학</th>
               <th class="text-center">호 수</th>
@@ -107,7 +108,7 @@
             </tr>
           </thead>
 
-          <tbody v-if="controlPanel.tab === 0">
+          <tbody v-if="tabID === 0">
             <tr
               v-for="room in rooms"
               :key="room.id"
@@ -133,7 +134,7 @@
               :key="idx"
             >
               <td>{{ item.college }}</td>
-              <td>{{ item.id }}</td>
+              <td>{{ item.classroomID }}</td>
               <td>{{ item.date }}</td>
               <td>{{ item.subject }}</td>
               <td>
@@ -141,7 +142,7 @@
                   color="#891a2b"
                   dense
                   class="reserve-btn"
-                  @click="getDetail(item)"
+                  @click="getReservationDetail(item.reservationID)"
                 >
                   상세 조회 ▶
                 </v-btn>
@@ -158,10 +159,19 @@
 <script>
 export default {
   name: 'Panel1',
+  watch: {
+    tabID: {
+      handler: function (tabID) {
+        this.$emit('getPanel2HideEvent', true)
+        this.myReservations = []
+        this.rooms = []
+      }
+    }
+  },
   data: () => {
     return {
+      tabID: 0, // 0 or 1
       controlPanel: {
-        tab: 0, // 0 or 1
         colleges: [
           { id: 1, name: '전자정보대학' }
         ],
@@ -176,12 +186,7 @@ export default {
         selectedDate: null,
         capacity: null
       },
-      myReservations: [
-        { college: '전자정보대학', id: '전101', date: '6/22 (월)', subject: '운영체제' },
-        { college: '전자정보대학', id: '전102', date: '6/22 (월)', subject: '운영체제' },
-        { college: '전자정보대학', id: '전211-2', date: '6/22 (월)', subject: '미분적분학' },
-        { college: '전자정보대학', id: '전211-2', date: '6/22 (월)', subject: '선형대수' }
-      ],
+      myReservations: [],
       rooms: []
     }
   },
@@ -233,12 +238,72 @@ export default {
           console.log(error.response)
           alert('조회가 실패했습니다. 다시 시도해주세요.')
         })
-
-      console.log(this.controlPanel)
     },
     getDetail (room) {
       window.scrollTo(0, 0)
       this.$emit('getDetailClickEvent', room.id)
+    },
+    getReservationDetail (reservationID) {
+      window.scrollTo(0, 0)
+      this.$emit('getReservationDetailClickEvent', reservationID)
+    },
+    getMyReservations () {
+      var url = this.$store.getters.getHost + '/api/reservations'
+      var token = this.$store.getters.getAccessToken
+      var user = this.$store.getters.getUserInfo
+      var headers = {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      }
+      this.$http
+        .get(url, {
+          params: {
+            user_email: user.email
+          },
+          headers: headers
+        })
+        .then(res => {
+          var reservations = res.data.data.reservations.reverse()
+          this.myReservations = []
+          reservations.forEach(element => {
+            var dateTokens = element.start_time.split(' ')[0].split('-')
+            var date = dateTokens[1] + '/' + dateTokens[2] + ' ' + this._dateToDay(dateTokens[1], dateTokens[2])
+            this.myReservations.push({
+              reservationID: element.reservation_id,
+              college: element.college_name,
+              classroomID: element.classroom_id,
+              date: date,
+              subject: element.subject
+            })
+          })
+        })
+        .catch(error => {
+          console.log(error.response)
+          alert('조회가 실패했습니다. 다시 시도해주세요.')
+        })
+    },
+    _dateToDay (month, day) {
+      if (month === '06') {
+        switch (day) {
+          case '20':
+            return '(토)'
+          case '21':
+            return '(일)'
+          case '22':
+            return '(월)'
+          case '23':
+            return '(화)'
+          case '24':
+            return '(수)'
+          case '25':
+            return '(목)'
+          case '26':
+            return '(금)'
+          case '27':
+            return '(토)'
+        }
+      }
+      return ''
     }
   }
 }

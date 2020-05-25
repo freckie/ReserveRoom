@@ -199,11 +199,11 @@ class PUTReservations(Resource):
             if not origin_start_time:
                 return error_response(400, 'origin_start_time을 전달해주세요.')
             else:
-                origin_start_time = datetime.datetime.strptime(origin_start_time, '%Y-%m-%d %H:%M')
+                origin_start_time = datetime.datetime.strptime(origin_start_time, '%Y-%m-%d %H:%M:%S')
             if not origin_end_time:
                 return error_response(400, 'origin_end_time 전달해주세요.')
             else:
-                origin_end_time = datetime.datetime.strptime(origin_end_time, '%Y-%m-%d %H:%M')
+                origin_end_time = datetime.datetime.strptime(origin_end_time, '%Y-%m-%d %H:%M:%S')
             if not classroom_id:
                 return error_response(400, 'classroom_id를 전달해주세요.')
             if not subject:

@@ -65,6 +65,35 @@ class GETReservations(Resource):
 
         return ok_response(result)
 
+# GET /reservations/<reservation_id>
+class GETReservationsDetail(Resource):
+
+    @jwt_required
+    @cross_origin()
+    def get(self, reservation_id):
+        # Querying
+        sql = '''
+            SELECT R.id "reservation_id", R.classroom_id, U.name "user_name", R.start_time, R.end_time, R.subject
+            FROM reservations R, users U
+            WHERE R.user_email=U.email
+                AND R.id=%s;
+        '''
+        row = app.db_driver.execute_one(sql, (reservation_id))
+
+        result = {
+            'reservation': {}
+        }
+        result['reservation'] = {
+            'reservation_id': row['reservation_id'],
+            'classroom_id': row['classroom_id'],
+            'user_name': row['user_name'],
+            'start_time': row['start_time'].strftime('%Y-%m-%d %H:%M'),
+            'end_time': row['end_time'].strftime('%Y-%m-%d %H:%M'),
+            'subject': row['subject']  
+        }
+
+        return ok_response(result)
+
 # POST /reservations
 class POSTReservations(Resource):
 

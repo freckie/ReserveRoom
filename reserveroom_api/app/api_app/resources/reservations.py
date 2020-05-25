@@ -186,6 +186,8 @@ class PUTReservations(Resource):
             end_time = request.json.get('end_time', None)
             classroom_id = request.json.get('classroom_id', None)
             subject = request.json.get('subject', None)
+            origin_start_time = request.json.get('origin_start_time', None)
+            origin_end_time = request.json.get('origin_end_time', None)
             if not start_time:
                 return error_response(400, 'start_time을 전달해주세요.')
             else:
@@ -194,6 +196,14 @@ class PUTReservations(Resource):
                 return error_response(400, 'end_time을 전달해주세요.')
             else:
                 end_time = datetime.datetime.strptime(end_time, '%Y-%m-%d %H:%M')
+            if not origin_start_time:
+                return error_response(400, 'origin_start_time을 전달해주세요.')
+            else:
+                origin_start_time = datetime.datetime.strptime(origin_start_time, '%Y-%m-%d %H:%M')
+            if not origin_end_time:
+                return error_response(400, 'origin_end_time 전달해주세요.')
+            else:
+                origin_end_time = datetime.datetime.strptime(origin_end_time, '%Y-%m-%d %H:%M')
             if not classroom_id:
                 return error_response(400, 'classroom_id를 전달해주세요.')
             if not subject:
@@ -207,6 +217,7 @@ class PUTReservations(Resource):
             WHERE classroom_id = %s
         '''
         targetTuple = (start_time, end_time)
+        originTuple = (origin_start_time, origin_end_time)
         timeList = []
         rows = app.db_driver.execute_all(sql,(classroom_id))
         for row in rows:
@@ -214,6 +225,7 @@ class PUTReservations(Resource):
             for value in row.values():
                 tmpList.append(value)
             timeList.append(tmpList)
+        timeList.remove(originTuple)
         available = is_available(timeList,targetTuple)
         if available == False:
             return error_response(400, '예약 불가능한 시간입니다.')

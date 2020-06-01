@@ -46,8 +46,8 @@ class GETReservations(Resource):
         # rows = app.db_driver.execute_all(sql)
 
         rows = app.database.execute(text('''
-            SELECT R.id "id", R.classroom_id "classroom_id", CL.id "college_id", CL.name "college_name", 
-                R.user_email "user_email", U.name "user_name", R.start_time "start_time", R.end_Time "end_time", R.subject "subject"
+            SELECT R.id id, R.classroom_id classroom_id, CL.id college_id, CL.name college_name, 
+                R.user_email user_email, U.name user_name, R.start_time start_time, R.end_Time end_time, R.subject subject
             FROM reservations R, users U, colleges CL, classrooms CR
             WHERE R.user_email=U.email
                 AND R.classroom_id=CR.id
@@ -136,6 +136,9 @@ class POSTReservations(Resource):
             subject = request.json.get('subject', None)
             if not user_email:
                 user_email = claims['email']
+                is_user = True
+            else:
+                is_user = False
             if not start_time:
                 return error_response(400, 'start_time을 전달해주세요.')
             else:
@@ -150,7 +153,17 @@ class POSTReservations(Resource):
                 return error_response(400, 'subject를 전달해주세요.')
         except Exception as exc:
             return error_response(400, 'JSON 파싱 에러가 발생했습니다 : ' + str(exc))
-        # is_available
+        if not is_user:
+            emailList = []
+            rows = app.database.execute(text('''
+                SELECT *
+                FROM users
+            '''),{}).fetchall()
+            for row in rows:
+                emailList.append(row['email'])
+            if user_email not in emailList:
+                return error_response(400, '유효하지 않은 이메일입니다.')
+            # is_available
         # sql = '''
         #     SELECT start_time, end_time
         #     FROM reservations
@@ -179,6 +192,7 @@ class POSTReservations(Resource):
         # try:
         #     result = app.db_driver.execute(sql, (classroom_id, user_email, start_time, end_time, subject))
         #     app.db_driver.commit()
+        
         try:
             app.database.execute(text('''
             INSERT INTO reservations (classroom_id, user_email, start_time, end_time, subject) VALUES ( :classroom_id, :user_email, :start_time, :end_time, :subject);
@@ -360,13 +374,18 @@ class POSTReservations2(Resource):
     def post(self):
         if not request.is_json:
             return error_response(400, 'JSON 형식으로 전달해주세요.')
-        
+        claims = get_jwt_claims()
         reserveList = request.json.get('reservations',None)
         queryList = []
 
         # check each reservation
         for reserve in reserveList:
             tmpEmail = reserve['user_email']
+            if not tmpEmail:
+                tmpEmail = claims['email']
+                is_user = True
+            else:
+                is_user = False
             start_time = datetime.datetime.strptime(reserve['start_time'], '%Y-%m-%d %H:%M')
             end_time = datetime.datetime.strptime(reserve['end_time'], '%Y-%m-%d %H:%M')
             tmpTarget = (start_time,end_time)
@@ -374,6 +393,16 @@ class POSTReservations2(Resource):
             tmpSubject = reserve['subject']
             tmpList = [tmpClassroom_id, tmpEmail, tmpTarget[0], tmpTarget[1], tmpSubject]
             queryList.append(tmpList)
+            if not is_user:
+            emailList = []
+            rows = app.database.execute(text('''
+                SELECT *
+                FROM users
+                '''),{}).fetchall()
+            for row in rows:
+                emailList.append(row['email'])
+            if user_email not in emailList:
+                return error_response(400, '유효하지 않은 이메일입니다.')
             # is_available
             # sql = '''
             #     SELECT start_time, end_time

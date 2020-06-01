@@ -87,13 +87,18 @@ class GETRoomsDetail(Resource):
     @cross_origin()
     def get(self):
          # Parse body params
-        try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('room_id', required=False, type=str)
-            args = parser.parse_args()
-        except:
-            pass
-        _room_id = args['room_id']
+        # parser = reqparse.RequestParser()
+        # parser.add_argument('room_id', required=False, type=str)
+        # args = parser.parse_args()
+
+        # Handle query parameters
+        params = {
+            'room_id': None
+        }
+        if 'room_id' in request.args:
+            params['room_id'] = request.args['room_id']
+        _room_id = params['room_id']
+        
         roomList = list(_room_id.split())
         # 1 room
         if len(roomList) == 1:
@@ -111,7 +116,8 @@ class GETRoomsDetail(Resource):
                 ORDER BY start_time
             '''),{
             'classroom_id' : _room_id
-            }).fetchall() 
+            }).fetchall()
+            print(rows)
         # 2 rooms
         elif len(roomList) == 2:
             # query = '''

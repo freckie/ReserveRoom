@@ -52,12 +52,10 @@ class GETReservations(Resource):
             WHERE R.user_email=U.email
                 AND R.classroom_id=CR.id
                 AND CR.college_id=CL.id
-                :_sql_email
-                :_sql_query
+                {}
+                {}
             ORDER BY id DESC;
-        '''),{
-            '_sql_email' : _sql_email,
-            '_sql_query' : _sql_query
+        '''.format(_sql_email,_sql_query)),{
         }).fetchall()
 
         result = {
@@ -168,6 +166,7 @@ class POSTReservations(Resource):
         '''),{
             'classroom_id' : classroom_id
         }).fetchall()
+        print(rows)
         for row in rows:
             tmpList = []
             for value in row.values():

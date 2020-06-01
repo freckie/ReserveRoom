@@ -344,7 +344,7 @@ class DELETEReservations(Resource):
 
         # Check level
         if claims['level'] != 9:
-            if claims['email'] != result[2]:
+            if claims['email'] != result[1]:
                 return error_response(403, "관리자 혹은 예약 당사자만 취소가 가능합니다.")
 
         # Querying

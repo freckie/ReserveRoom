@@ -37,7 +37,6 @@ class POSTSignin(Resource):
         '''),{
             'email' : email
         }).fetchone()
-
         if int(result['counts']) == 0:
             return error_response(401, '이메일이 잘못되었습니다.')
         if result['level'] != 0: # Need to change pw (first login)

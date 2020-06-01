@@ -94,7 +94,7 @@ class GETReservationsDetail(Resource):
         # row = app.db_driver.execute_one(sql, (reservation_id))
        
         row = app.database.execute(text('''
-            SELECT R.id "reservation_id", R.classroom_id, U.email "user_email", U.name "user_name", R.start_time, R.end_time, R.subject
+            SELECT R.id reservation_id, R.classroom_id, U.email user_email, U.name user_name, R.start_time, R.end_time, R.subject
             FROM reservations R, users U
             WHERE R.user_email=U.email
             AND R.id= :id;
@@ -208,7 +208,7 @@ class PUTReservations(Resource):
         #     result = app.db_driver.execute_one(sql, (reservation_id))
         try:
             result = app.database.execute(text('''
-            SELECT count(user_email) "count", user_email 
+            SELECT count(user_email) count, user_email 
             FROM reservations WHERE id= :reservation_id
             '''),{
             'reservation_id' : reservation_id
@@ -317,7 +317,7 @@ class DELETEReservations(Resource):
         #     result = app.db_driver.execute_one(sql, (reservation_id))
         try:
             result = app.database.execute(text('''
-            SELECT count(user_email) "count", user_email 
+            SELECT count(user_email) count, user_email 
             FROM reservations 
             WHERE id= :reservation_id;
             '''),{

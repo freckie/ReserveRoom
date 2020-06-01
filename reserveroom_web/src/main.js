@@ -10,7 +10,19 @@ import '@mdi/font/css/materialdesignicons.css'
 Vue.use(Vuetify)
 
 Vue.config.productionTip = false
+
+// Axios
 Vue.prototype.$http = axios
+axios.interceptors.request.use(
+  function (config) {
+    var refreshToken = store.getters.getRefreshToken
+    store.dispatch('REFRESH', { refreshToken })
+    return config
+  },
+  function (error) {
+    return Promise.reject(error)
+  }
+)
 
 new Vue({
   vuetify: new Vuetify(),

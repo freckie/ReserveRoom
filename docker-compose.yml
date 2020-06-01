@@ -15,6 +15,13 @@ services:
       - "80:80"
     networks:
       - backend
+  reserveroom_web:
+    build: './reserveroom_web'
+    container_name: web.front
+    ports:
+      - "8080:8080"
+    environment:
+      - POR=9000
 
 networks:
   backend:

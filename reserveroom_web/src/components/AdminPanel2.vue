@@ -29,6 +29,7 @@
                 v-model="reservation.userEmail"
                 label="교수 이메일"
                 hide-details="true"
+                :disabled="mode==='update'"
                 outlined
                 dense
               >
@@ -85,13 +86,20 @@
             id="ok-btn"
             @click="createReservation"
           >신&nbsp;청</v-btn>
-          <v-btn
-            v-else
-            depressed
-            color="#891a2b"
-            id="ok-btn"
-            @click="updateReservation"
-          >수&nbsp;정</v-btn>
+          <div v-else>
+            <v-btn
+              depressed
+              color="error"
+              id="ok-btn"
+              @click="deleteReservation"
+            >삭&nbsp;제</v-btn>
+            <v-btn
+              depressed
+              color="#891a2b"
+              id="ok-btn"
+              @click="updateReservation"
+            >수&nbsp;정</v-btn>
+          </div>
         </v-container>
 
       </v-form>
@@ -141,7 +149,8 @@ export default {
       mode: 'new', // 'new' or 'update'
       roomData: {
         id: '',
-        reservations: []
+        reservations: [],
+        count: 1
       },
       reservation: {
         subject: null,
@@ -178,6 +187,9 @@ export default {
       this.roomData.id = roomID
       this.show = true
       this.mode = 'new'
+
+      // room counts
+      this.roomData.count = roomID.split(' ').length
 
       this._loadRoomReservations(roomID)
     },
@@ -327,6 +339,40 @@ export default {
           this._loadMyReservation(this.reservation.reservationID)
         })
     },
+    deleteReservation () {
+      // Check
+      var result = prompt('예약이 삭제됩니다.\n계속 진행하시려면 "삭제"를 입력해주세요.')
+      if (result !== '삭제') {
+        alert('잘못 입력하셨습니다.')
+        return
+      }
+
+      // Update reservations
+      var url = this.$store.getters.getHost
+      url = url + '/api/reservations/' + this.reservation.reservationID
+
+      // Request
+      var token = this.$store.getters.getAccessToken
+      this.$http
+        .delete(
+          url, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+              'Content-Type': 'application/json'
+            }
+          })
+        .then(res => {
+          alert('예약 삭제에 성공했습니다. 페이지가 새로고침됩니다.')
+          this._loadRoomReservations(this.roomData.id)
+          this.$router.go(0)
+        })
+        .catch(error => {
+          console.log(error.response)
+          alert('기존 예약 삭제에 실패했습니다 : ' + error.response.data.message)
+          this._clearForm()
+          this._loadMyReservation(this.reservation.reservationID)
+        })
+    },
     _clearForm () {
       this.reservation.subject = null
       this.reservation.startTime = null
@@ -452,6 +498,8 @@ export default {
 
     #ok-btn {
       color: white;
+      margin-left: 5px;
+      margin-right: 5px;
     }
   }
 }

@@ -16,8 +16,8 @@ services:
     networks:
       - backend
     depends_on:
-      - web.api
-      - web.front
+      - reserveroom_api
+      - reserveroom_web
   reserveroom_web:
     build: './reserveroom_web'
     container_name: web.front

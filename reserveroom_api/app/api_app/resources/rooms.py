@@ -117,7 +117,6 @@ class GETRoomsDetail(Resource):
             '''),{
             'classroom_id' : _room_id
             }).fetchall()
-            print(rows)
         # 2 rooms
         elif len(roomList) == 2:
             # query = '''

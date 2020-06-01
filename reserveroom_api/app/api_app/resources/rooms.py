@@ -16,14 +16,16 @@ class GETRooms(Resource):
     @cross_origin()
     def get(self):
         # Parse body params
-
-        parser = reqparse.RequestParser()
-        parser.add_argument('college_id', required=False, default=1, type=int)
-        parser.add_argument('capacity', required=False, default=0, type=int)
-        args = parser.parse_args()
-
-        _college_id = args['college_id']
-        _capacity = args['capacity']
+        params = {
+            'college_id': None,
+            'capacity' : None
+        }
+        if 'college_id' in request.args:
+            params['college_id'] = request.args['college_id']
+        if 'capacity' in request.args:
+            params['capacity'] = request.args['capacity']
+        _college_id = params['college_id']
+        _capacity = params['capacity']
 
         # Querying
         query = '''
@@ -154,18 +156,23 @@ class GETRoomsAvailable(Resource):
     @jwt_required
     @cross_origin()
     def get(self):
-         # Parse body params
-        try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('room_id', required=False, type=str)
-            parser.add_argument('start_time',required=True, type=str)
-            parser.add_argument('end_time',required=True, type=str)
-            args = parser.parse_args()
-        except:
-            pass
-        _room_id = args['room_id']
-        _start_time = dt.datetime.strptime(args['start_time'],'%Y-%m-%d %H:%M')
-        _end_time = dt.datetime.strptime(args['end_time'],'%Y-%m-%d %H:%M')
+
+        # Handle query parameters
+        params = {
+            'room_id': None,
+            'start_time' : None,
+            'end_time' : None
+        }
+        if 'room_id' in request.args:
+            params['room_id'] = request.args['room_id']
+        if 'start_time' in request.args:
+            params['start_time'] = request.args['start_time']
+        if 'end_time' in request.args:
+            params['end_time'] = request.args['end_time']
+
+        _room_id = params['room_id']
+        _start_time = dt.datetime.strptime(params['start_time'],'%Y-%m-%d %H:%M')
+        _end_time = dt.datetime.strptime(params['end_time'],'%Y-%m-%d %H:%M')
 
         # Querying
         # query = '''

@@ -166,7 +166,6 @@ class POSTReservations(Resource):
         '''),{
             'classroom_id' : classroom_id
         }).fetchall()
-        print(rows)
         for row in rows:
             tmpList = []
             for value in row.values():
@@ -371,7 +370,6 @@ class POSTReservations2(Resource):
             start_time = datetime.datetime.strptime(reserve['start_time'], '%Y-%m-%d %H:%M')
             end_time = datetime.datetime.strptime(reserve['end_time'], '%Y-%m-%d %H:%M')
             tmpTarget = (start_time,end_time)
-            print(tmpTarget)
             tmpClassroom_id = reserve['classroom_id']
             tmpSubject = reserve['subject']
             tmpList = [tmpClassroom_id, tmpEmail, tmpTarget[0], tmpTarget[1], tmpSubject]

@@ -82,7 +82,7 @@ export default {
         return
       }
 
-      var email = this.email
+      var email = this.email.toLowerCase()
       var password = this.password
       this.$store
         .dispatch('LOGIN', { email, password })

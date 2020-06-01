@@ -362,10 +362,12 @@ export default {
       var token = this.$store.getters.getAccessToken
       this.$http
         .delete(
-          url, {}, {
-            Authorization: 'Bearer ' + token,
-            'Content-Type': 'application/json'
-          })
+          url, {
+            headers: {
+              Authorization: 'Bearer ' + token,
+              'Content-Type': 'application/json'
+            }
+          }, {})
         .then(res => {
           alert('예약 삭제에 성공했습니다. 페이지가 새로고침됩니다.')
           this._loadRoomReservations(this.roomData.id)

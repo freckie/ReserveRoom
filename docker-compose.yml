@@ -1,13 +1,23 @@
 version: '3'
 
 services:
-  reserveroom_api:
+  web.api:
     container_name: web.api
     image: "reserveroom_api:latest"
     ports:
       - "8000:8000"
     networks:
       - backend
+
+  web.front:
+    build: './reserveroom_web'
+    container_name: web.front
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+
   nginx:
     container_name: nginx
     image: "reserveroom_nginx:latest"
@@ -16,15 +26,8 @@ services:
     networks:
       - backend
     depends_on:
-      - reserveroom_api
-      - reserveroom_web
-  reserveroom_web:
-    build: './reserveroom_web'
-    container_name: web.front
-    ports:
-      - "8080:8080"
-    environment:
-      - POR=9000
+      - web.api
+      - web.front
 
 networks:
   backend:

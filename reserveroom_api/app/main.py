@@ -21,9 +21,9 @@ app.config['JWT_SECRET_KEY'] = 'reserveroom'
 if not config['server']['debug']:
     app.config['SERVER_NAME'] = '{}:{}'.format(config['server']['server_name'], str(config['server']['port']))
 
-# DB connection
-from api_app.db import DB
-app.db_driver = DB(config['db'])
+# # DB connection
+# from api_app.db import DB
+# app.db_driver = DB(config['db'])
 
 from sqlalchemy import create_engine, text
 app.config.from_pyfile('config.py')

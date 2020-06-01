@@ -386,7 +386,7 @@ class POSTReservations2(Resource):
             FROM reservations
             WHERE classroom_id = :classroom_id
             '''),{
-            'classroom_id' : classroom_id
+            'classroom_id' : tmpClassroom_id
             }).fetchall()
             timeList = []
             for row in rows:

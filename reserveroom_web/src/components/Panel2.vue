@@ -89,7 +89,7 @@
           <div v-else>
             <v-btn
               depressed
-              color="danger"
+              color="error"
               id="ok-btn"
               @click="deleteReservation"
             >삭&nbsp;제</v-btn>

@@ -60,7 +60,7 @@ class GETRooms(Resource):
             comb_name = combination[0]+' '+combination[1]
             if comb_name not in comb_dict:
                 tmp = int(class_dict[combination[0]]) + int(class_dict[combination[1]])
-                if tmp >= _capacity * 2:
+                if tmp >= int(_capacity) * 2:
                     comb_dict[comb_name] = tmp
         
 

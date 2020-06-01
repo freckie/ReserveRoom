@@ -6,8 +6,6 @@ services:
     image: "reserveroom_api:latest"
     ports:
       - "8000:8000"
-    networks:
-      - backend
 
   web.front:
     build: './reserveroom_web'
@@ -20,15 +18,12 @@ services:
 
   nginx:
     container_name: nginx
-    image: "reserveroom_nginx:latest"
+    image: "nginx.latest"
     ports:
       - "80:80"
-    networks:
-      - backend
+    volumes:
+      - ./reserveroom_web/public:/srv/www/static
+      - ./default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - web.api
       - web.front
-
-networks:
-  backend:
-    driver: bridge

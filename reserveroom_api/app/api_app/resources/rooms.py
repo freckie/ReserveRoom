@@ -39,7 +39,7 @@ class GETRooms(Resource):
             '''),{
             }).fetchall()
         query += 'AND R.college_id = ' + str(_college_id) + ' AND R.capacity >= ' + str(_capacity * 2)
-        rows = app.db_driver.execute_all(query)
+        # rows = app.db_driver.execute_all(query)
         rows = app.database.execute(text(query),{
         }).fetchall()
 

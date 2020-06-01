@@ -394,15 +394,15 @@ class POSTReservations2(Resource):
             tmpList = [tmpClassroom_id, tmpEmail, tmpTarget[0], tmpTarget[1], tmpSubject]
             queryList.append(tmpList)
             if not is_user:
-            emailList = []
-            rows = app.database.execute(text('''
-                SELECT *
-                FROM users
-                '''),{}).fetchall()
-            for row in rows:
-                emailList.append(row['email'])
-            if user_email not in emailList:
-                return error_response(400, '유효하지 않은 이메일입니다.')
+                emailList = []
+                rows = app.database.execute(text('''
+                    SELECT *
+                    FROM users
+                    '''),{}).fetchall()
+                for row in rows:
+                    emailList.append(row['email'])
+                if user_email not in emailList:
+                    return error_response(400, '유효하지 않은 이메일입니다.')
             # is_available
             # sql = '''
             #     SELECT start_time, end_time

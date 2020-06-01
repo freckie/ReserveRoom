@@ -25,6 +25,11 @@ if not config['server']['debug']:
 from api_app.db import DB
 app.db_driver = DB(config['db'])
 
+from sqlalchemy import create_engine, text
+app.config.from_pyfile('config.py')
+database = create_engine(app.config['DB_URL'],encoding='utf-8',max_overflow=0)
+app.database = database
+
 # JWT Manager
 from flask_jwt_extended import JWTManager
 jwt_manager = JWTManager(app)

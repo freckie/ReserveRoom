@@ -8,7 +8,7 @@ from flask_jwt_extended import (
 from flask_cors import cross_origin
 from api_app.models.response import error_response, ok_response
 from flask import current_app as app
-
+from sqlalchemy import text
 # POST /auth/signin
 class POSTSignin(Resource):
     @cross_origin()
@@ -28,8 +28,17 @@ class POSTSignin(Resource):
             return error_response(400, 'JSON 파싱 에러가 발생했습니다 : ' + str(exc))
 
         # Querying and check email & pw
-        query = 'SELECT count(email) AS counts, email, name, password, level FROM users WHERE email=%s;'
-        result = app.db_driver.execute_one(query, (email))
+        # query = '''SELECT count(email) AS counts, email, name, password, level 
+        #         FROM users WHERE email=%s;'''
+        # result = app.db_driver.execute_one(query, (email))
+        result = app.database.execute(text('''
+            SELECT count(email) AS counts, email, name, password, level 
+            FROM users WHERE email= :email
+        '''),{
+            'email' : email
+        }).fetchone()
+
+        print(result)
         if int(result['counts']) == 0:
             return error_response(401, '이메일이 잘못되었습니다.')
         if result['level'] != 0: # Need to change pw (first login)
@@ -91,10 +100,19 @@ class POSTResetPW(Resource):
             new_level = 1
         elif claims['level'] == 9:
             new_level = 9
-        query = 'UPDATE users SET password=%s, level=%s WHERE email=%s;'
+        # query = 'UPDATE users SET password=%s, level=%s WHERE email=%s;'
+        # try:
+        #     app.db_driver.execute(query, (hashed, int(new_level), claims['email']))
+        #     app.db_driver.commit()
         try:
-            app.db_driver.execute(query, (hashed, int(new_level), claims['email']))
-            app.db_driver.commit()
+            app.database.execute(text('''
+            UPDATE users SET password= :password, level= :level WHERE email= :email
+            FROM users WHERE email= :email
+            '''),{
+            'password' : hashed,
+            'level' : new_level,
+            'email' : claims['email']
+            }).fetchall()
         except Exception as exc:
             return error_response(500, str(exc))
 
@@ -119,10 +137,17 @@ class POSTSignup(Resource):
             return error_response(400, 'JSON 파싱 에러가 발생했습니다 : ' + str(exc))
         
         # Querying
-        query = 'INSERT INTO users (email, name) VALUES (%s, %s);'
+        # query = 'INSERT INTO users (email, name) VALUES (%s, %s);'
         try:
-            result = app.db_driver.execute_one(query, (email, name))
-            app.db_driver.commit()
+            result = app.database.execute(text('''
+                INSERT INTO users (email, name) 
+                VALUES (:email, :name)
+            '''),{
+                'email' : email,
+                'name' : name
+            })
+            # result = app.db_driver.execute_one(query, (email, name))
+            # app.db_driver.commit()
         except Exception as exc:
             return error_response(500, str(exc))
 

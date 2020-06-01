@@ -8,7 +8,7 @@ from api_app.utils import is_available
 
 import datetime as dt
 import itertools
-
+from sqlalchemy import text
 # GET /rooms
 class GETRooms(Resource):
 
@@ -16,13 +16,12 @@ class GETRooms(Resource):
     @cross_origin()
     def get(self):
         # Parse body params
-        try:
-            parser = reqparse.RequestParser()
-            parser.add_argument('college_id', required=False, default=1, type=int)
-            parser.add_argument('capacity', required=False, default=0, type=int)
-            args = parser.parse_args()
-        except:
-            pass
+
+        parser = reqparse.RequestParser()
+        parser.add_argument('college_id', required=False, default=1, type=int)
+        parser.add_argument('capacity', required=False, default=0, type=int)
+        args = parser.parse_args()
+
         _college_id = args['college_id']
         _capacity = args['capacity']
 
@@ -32,11 +31,17 @@ class GETRooms(Resource):
             FROM classrooms R, colleges C
             WHERE R.college_id=C.id
         '''
-        all_rows = app.db_driver.execute_all(query) 
-
+        # all_rows = app.db_driver.execute_all(query) 
+        all_rows = app.database.execute(text('''
+            SELECT C.name, R.id, R.capacity
+            FROM classrooms R, colleges C
+            WHERE R.college_id=C.id
+            '''),{
+            }).fetchall()
         query += 'AND R.college_id = ' + str(_college_id) + ' AND R.capacity >= ' + str(_capacity * 2)
         rows = app.db_driver.execute_all(query)
-
+        rows = app.database.execute(text(query),{
+        }).fetchall()
 
         class_dict = {}
         name_list = []
@@ -92,22 +97,39 @@ class GETRoomsDetail(Resource):
         roomList = list(_room_id.split())
         # 1 room
         if len(roomList) == 1:
-            query = '''
+            # query = '''
+            #     SELECT start_time, end_time
+            #     FROM reservations
+            #     WHERE classroom_id = %s
+            #     ORDER BY start_time
+            # ''' 
+            # rows = app.db_driver.execute_all(query,(_room_id))  
+            rows = app.database.execute(text('''
                 SELECT start_time, end_time
                 FROM reservations
-                WHERE classroom_id = %s
+                WHERE classroom_id = :classroom_id
                 ORDER BY start_time
-            ''' 
-            rows = app.db_driver.execute_all(query,(_room_id))   
+            '''),{
+            'classroom_id' : _room_id
+            }).fetchall() 
         # 2 rooms
         elif len(roomList) == 2:
-            query = '''
+            # query = '''
+            #     SELECT DISTINCT start_time, end_time
+            #     FROM reservations
+            #     WHERE classroom_id in (%s, %s)
+            #     ORDER BY start_time
+            # '''
+            # rows = app.db_driver.execute_all(query,(roomList[0],roomList[1]))
+            rows = app.database.execute(text('''
                 SELECT DISTINCT start_time, end_time
                 FROM reservations
-                WHERE classroom_id in (%s, %s)
+                WHERE classroom_id in (:room1, :room2)
                 ORDER BY start_time
-            '''
-            rows = app.db_driver.execute_all(query,(roomList[0],roomList[1]))
+            '''),{
+            'room1' : roomList[0],
+            'room2' : roomList[1]
+            }).fetchall() 
 
          # Fetch
         result = {
@@ -141,14 +163,21 @@ class GETRoomsAvailable(Resource):
         _end_time = dt.datetime.strptime(args['end_time'],'%Y-%m-%d %H:%M')
 
         # Querying
-        query = '''
-            SELECT start_time, end_time
-            FROM reservations
-            WHERE classroom_id = %s
-        '''
+        # query = '''
+        #     SELECT start_time, end_time
+        #     FROM reservations
+        #     WHERE classroom_id = %s
+        # '''
+        # rows = app.db_driver.execute_all(query,(_room_id))
         targetTuple = (_start_time,_end_time)
         timeList = []
-        rows = app.db_driver.execute_all(query,(_room_id))
+        rows = app.database.execute(text('''
+            SELECT start_time, end_time
+            FROM reservations
+            WHERE classroom_id = :classroom_id
+        '''),{
+                'classroom_id' : _room_id
+            }).fetchall() 
         for row in rows:
             tmpList = []
             for value in row.values():

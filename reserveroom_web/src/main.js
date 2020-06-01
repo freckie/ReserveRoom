@@ -15,7 +15,18 @@ Vue.config.productionTip = false
 Vue.prototype.$http = axios
 axios.interceptors.request.use(
   function (config) {
+    if (store.getters.getAccessToken === null) {
+      return config
+    }
     var refreshToken = store.getters.getRefreshToken
+    if (refreshToken === null || refreshToken === '') {
+      return config
+    }
+
+    if (config.url.includes('/auth/refresh')) {
+      return config
+    }
+    console.log('refresh 요청 중 ...')
     store.dispatch('REFRESH', { refreshToken })
     return config
   },

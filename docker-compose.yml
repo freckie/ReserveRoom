@@ -1,28 +1,29 @@
 version: '3'
 
 services:
-  reserveroom_api:
+  web.api:
     container_name: web.api
     image: "reserveroom_api:latest"
     ports:
       - "8000:8000"
-    networks:
-      - backend
-  nginx:
-    container_name: nginx
-    image: "reserveroom_nginx:latest"
-    ports:
-      - "80:80"
-    networks:
-      - backend
-  reserveroom_web:
+
+  web.front:
     build: './reserveroom_web'
     container_name: web.front
     ports:
       - "8080:8080"
     environment:
-      - POR=9000
+      - NODE_ENV=production
+      - PORT=8080
 
-networks:
-  backend:
-    driver: bridge
+  nginx:
+    container_name: nginx
+    image: "nginx:latest"
+    ports:
+      - "80:80"
+    volumes:
+      - ./reserveroom_web/public:/srv/www/static
+      - ./default.conf:/etc/nginx/conf.d
+    depends_on:
+      - web.api
+      - web.front

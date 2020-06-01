@@ -206,7 +206,7 @@ class POSTReservations(Resource):
         except Exception as exc:
             return error_response(500, str(exc))
 
-        return ok_response({'affected_rows': result})
+        return ok_response(None)
 
 # PUT /reservations/<reservation_id>
 class PUTReservations(Resource):
@@ -311,11 +311,11 @@ class PUTReservations(Resource):
             'classroom_id' : classroom_id,
             'subject' : subject,
             'reservation_id' : reservation_id
-            }).fetchall()
+            })
         except Exception as exc:
             return error_response(500, str(exc))
         
-        return ok_response(result)
+        return ok_response(None)
 
 # DELETE /reservations/<reservation_id>
 class DELETEReservations(Resource):
@@ -339,7 +339,7 @@ class DELETEReservations(Resource):
             }).fetchall()
         except Exception as exc:
             return error_response(404, "해당 예약 건을 찾을 수 없습니다. " + str(exc))
-        if result['count'] == 0:
+        if result[0] == 0:
             return error_response(404, "해당 예약 건을 찾을 수 없습니다.")
 
         # Check level
@@ -358,11 +358,11 @@ class DELETEReservations(Resource):
             WHERE id= :reservation_id
             '''),{
             'reservation_id' : reservation_id
-            }).fetchall()
+            })
+
         except Exception as exc:
             return error_response(500, str(exc))
-        if result != 1:
-            return error_response(500, "해당 요청 처리에 실패하였습니다.")
+
         
         return ok_response(None)
 
@@ -447,7 +447,7 @@ class POSTReservations2(Resource):
             'start_time2' : queryList[1][2],
             'end_time2' : queryList[1][3],
             'subject2' : queryList[1][4]
-            }).fetchall()
+            })
         except Exception as exc:
             return error_response(500, str(exc))
 

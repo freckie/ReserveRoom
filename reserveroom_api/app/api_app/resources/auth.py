@@ -110,7 +110,7 @@ class POSTResetPW(Resource):
             'password' : hashed,
             'level' : new_level,
             'email' : claims['email']
-            }).fetchall()
+            })
         except Exception as exc:
             return error_response(500, str(exc))
 
@@ -149,7 +149,7 @@ class POSTSignup(Resource):
         except Exception as exc:
             return error_response(500, str(exc))
 
-        return ok_response(result)
+        return ok_response(None)
 
 # POST /auth/refresh
 class POSTRefresh(Resource):

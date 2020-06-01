@@ -100,7 +100,7 @@ class GETReservationsDetail(Resource):
             AND R.id= :id;
         '''),{
             'id' : reservation_id
-        }).fetchall()
+        }).fetchone()
         result = {
             'reservation': {}
         }

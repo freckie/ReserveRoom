@@ -174,10 +174,12 @@ export default {
           { id: '2020-06-26', value: '6/26 (금)' }
         ],
         times: []
-      }
+      },
+      sending: false
     }
   },
   created () {
+    this.sending = false
     this.show = false
     this.createTimeItems()
   },
@@ -213,6 +215,11 @@ export default {
       }
     },
     createReservation () {
+      if (this.sending) {
+        return
+      }
+
+      this.sending = true
       // Check all parameters valid
       if (
         this.reservation.subject === '' || this.reservation.subject === null ||
@@ -285,8 +292,15 @@ export default {
           console.log(error.response)
           alert('예약 신청이 실패했습니다 : ' + error.response.data.message)
         })
+      this.sending = false
     },
     updateReservation () {
+      if (this.sending) {
+        return
+      }
+
+      this.sending = true
+
       // Check all parameters valid
       if (
         this.reservation.subject === '' || this.reservation.subject === null ||
@@ -338,8 +352,15 @@ export default {
           this._clearForm()
           this._loadMyReservation(this.reservation.reservationID)
         })
+      this.sending = false
     },
     deleteReservation () {
+      if (this.sending) {
+        return
+      }
+
+      this.sending = true
+
       // Check
       var result = prompt('예약이 삭제됩니다.\n계속 진행하시려면 "삭제"를 입력해주세요.')
       if (result !== '삭제') {
@@ -362,9 +383,8 @@ export default {
             }
           }, {})
         .then(res => {
-          alert('예약 삭제에 성공했습니다. 페이지가 새로고침됩니다.')
+          alert('예약 삭제에 성공했습니다.')
           this._loadRoomReservations(this.roomData.id)
-          this.$router.go(0)
         })
         .catch(error => {
           console.log(error.response)
@@ -372,6 +392,7 @@ export default {
           this._clearForm()
           this._loadMyReservation(this.reservation.reservationID)
         })
+      this.sending = false
     },
     _clearForm () {
       this.reservation.subject = null

@@ -401,7 +401,7 @@ class POSTReservations2(Resource):
                     '''),{}).fetchall()
                 for row in rows:
                     emailList.append(row['email'])
-                if user_email not in emailList:
+                if tmpEmail not in emailList:
                     return error_response(400, '유효하지 않은 이메일입니다.')
             # is_available
             # sql = '''

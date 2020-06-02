@@ -43,7 +43,6 @@ def my_expired_token_callback(expired_token):
         'msg': '세션이 만료되었습니다.'
     }), 401
 
-@jwt_manager.
 # API
 from api_app.api import build_api
 build_api(app)

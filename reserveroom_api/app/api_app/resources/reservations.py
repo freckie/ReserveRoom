@@ -367,7 +367,7 @@ class POSTReservations2(Resource):
                 return error_response(400, '예약 불가능한 시간입니다.')
         # Insert Querying
         try:
-            result = app.database.execute(text('''
+            app.database.execute(text('''
             INSERT INTO reservations (classroom_id, user_email, start_time, end_time, subject) 
             VALUES ( :classroom_id1, :user_email1, :start_time1, :end_time1, :subject1),( :classroom_id2, :user_email2, :start_time2, :end_time2, :subject2)
             '''),{

@@ -336,7 +336,7 @@ class DELETEReservations(Resource):
             WHERE id= :reservation_id;
             '''),{
             'reservation_id' : reservation_id
-            }).fetchall()
+            }).fetchone()
         except Exception as exc:
             return error_response(404, "해당 예약 건을 찾을 수 없습니다. " + str(exc))
         if result[0] == 0:

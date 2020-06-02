@@ -88,11 +88,6 @@ class GETRoomsDetail(Resource):
     @jwt_required
     @cross_origin()
     def get(self):
-         # Parse body params
-        # parser = reqparse.RequestParser()
-        # parser.add_argument('room_id', required=False, type=str)
-        # args = parser.parse_args()
-
         # Handle query parameters
         params = {
             'room_id': None
@@ -104,13 +99,6 @@ class GETRoomsDetail(Resource):
         roomList = list(_room_id.split())
         # 1 room
         if len(roomList) == 1:
-            # query = '''
-            #     SELECT start_time, end_time
-            #     FROM reservations
-            #     WHERE classroom_id = %s
-            #     ORDER BY start_time
-            # ''' 
-            # rows = app.db_driver.execute_all(query,(_room_id))  
             rows = app.database.execute(text('''
                 SELECT start_time, end_time
                 FROM reservations
@@ -121,13 +109,6 @@ class GETRoomsDetail(Resource):
             }).fetchall()
         # 2 rooms
         elif len(roomList) == 2:
-            # query = '''
-            #     SELECT DISTINCT start_time, end_time
-            #     FROM reservations
-            #     WHERE classroom_id in (%s, %s)
-            #     ORDER BY start_time
-            # '''
-            # rows = app.db_driver.execute_all(query,(roomList[0],roomList[1]))
             rows = app.database.execute(text('''
                 SELECT DISTINCT start_time, end_time
                 FROM reservations
@@ -175,12 +156,6 @@ class GETRoomsAvailable(Resource):
         _end_time = dt.datetime.strptime(params['end_time'],'%Y-%m-%d %H:%M')
 
         # Querying
-        # query = '''
-        #     SELECT start_time, end_time
-        #     FROM reservations
-        #     WHERE classroom_id = %s
-        # '''
-        # rows = app.db_driver.execute_all(query,(_room_id))
         targetTuple = (_start_time,_end_time)
         timeList = []
         rows = app.database.execute(text('''

@@ -27,10 +27,6 @@ class POSTSignin(Resource):
         except Exception as exc:
             return error_response(400, 'JSON 파싱 에러가 발생했습니다 : ' + str(exc))
 
-        # Querying and check email & pw
-        # query = '''SELECT count(email) AS counts, email, name, password, level 
-        #         FROM users WHERE email=%s;'''
-        # result = app.db_driver.execute_one(query, (email))
         result = app.database.execute(text('''
             SELECT count(email) AS counts, email, name, password, level 
             FROM users WHERE email= :email
@@ -98,10 +94,6 @@ class POSTResetPW(Resource):
             new_level = 1
         elif claims['level'] == 9:
             new_level = 9
-        # query = 'UPDATE users SET password=%s, level=%s WHERE email=%s;'
-        # try:
-        #     app.db_driver.execute(query, (hashed, int(new_level), claims['email']))
-        #     app.db_driver.commit()
         try:
             app.database.execute(text('''
             UPDATE users SET password= :password, level= :level WHERE email= :email
@@ -133,9 +125,7 @@ class POSTSignup(Resource):
                 return error_response(400, '이름을 전달해주세요.')
         except Exception as exc:
             return error_response(400, 'JSON 파싱 에러가 발생했습니다 : ' + str(exc))
-        
         # Querying
-        # query = 'INSERT INTO users (email, name) VALUES (%s, %s);'
         try:
             app.database.execute(text('''
                 INSERT INTO users (email, name) 
@@ -144,8 +134,6 @@ class POSTSignup(Resource):
                 'email' : email,
                 'name' : name
             })
-            # result = app.db_driver.execute_one(query, (email, name))
-            # app.db_driver.commit()
         except Exception as exc:
             return error_response(500, str(exc))
 

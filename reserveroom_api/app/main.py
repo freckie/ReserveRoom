@@ -22,9 +22,6 @@ if not config['server']['debug']:
     app.config['SERVER_NAME'] = '{}:{}'.format(config['server']['server_name'], str(config['server']['port']))
 
 # # DB connection
-# from api_app.db import DB
-# app.db_driver = DB(config['db'])
-
 from sqlalchemy import create_engine, text
 app.config.from_pyfile('config.py')
 database = create_engine(app.config['DB_URL'],encoding='utf-8',max_overflow=0)

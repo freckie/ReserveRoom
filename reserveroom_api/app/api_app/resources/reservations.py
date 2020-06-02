@@ -31,20 +31,6 @@ class GETReservations(Resource):
         
         if params['query'] is not None:
             _sql_query = ' AND (R.subject LIKE "%{}%" OR U.name LIKE "%{}%") '.format(params['query'], params['query'])
-
-        # sql = '''
-        #     SELECT R.id "id", R.classroom_id "classroom_id", CL.id "college_id", CL.name "college_name", 
-        #         R.user_email "user_email", U.name "user_name", R.start_time "start_time", R.end_Time "end_time", R.subject "subject"
-        #     FROM reservations R, users U, colleges CL, classrooms CR
-        #     WHERE R.user_email=U.email
-        #         AND R.classroom_id=CR.id
-        #         AND CR.college_id=CL.id
-        #         {}
-        #         {}
-        #     ORDER BY id DESC;
-        # '''.format(_sql_email, _sql_query)
-        # rows = app.db_driver.execute_all(sql)
-
         rows = app.database.execute(text('''
             SELECT R.id id, R.classroom_id classroom_id, CL.id college_id, CL.name college_name, 
                 R.user_email user_email, U.name user_name, R.start_time start_time, R.end_Time end_time, R.subject subject
@@ -85,14 +71,6 @@ class GETReservationsDetail(Resource):
     @cross_origin()
     def get(self, reservation_id):
         # Querying
-        # sql = '''
-        #     SELECT R.id "reservation_id", R.classroom_id, U.email "user_email", U.name "user_name", R.start_time, R.end_time, R.subject
-        #     FROM reservations R, users U
-        #     WHERE R.user_email=U.email
-        #         AND R.id=%s;
-        # '''
-        # row = app.db_driver.execute_one(sql, (reservation_id))
-       
         row = app.database.execute(text('''
             SELECT R.id reservation_id, R.classroom_id, U.email user_email, U.name user_name, R.start_time, R.end_time, R.subject
             FROM reservations R, users U
@@ -163,13 +141,7 @@ class POSTReservations(Resource):
                 emailList.append(row['email'])
             if user_email not in emailList:
                 return error_response(400, '유효하지 않은 이메일입니다.')
-            # is_available
-        # sql = '''
-        #     SELECT start_time, end_time
-        #     FROM reservations
-        #     WHERE classroom_id = %s
-        # '''
-        # rows = app.db_driver.execute_all(sql,(classroom_id))
+        # is_available
         targetTuple = (start_time, end_time)
         timeList = []
         rows = app.database.execute(text('''
@@ -187,12 +159,6 @@ class POSTReservations(Resource):
         available = is_available(timeList,targetTuple)
         if available == False:
             return error_response(400, '예약 불가능한 시간입니다.')
-        # Insert Querying
-        # sql = 'INSERT INTO reservations (classroom_id, user_email, start_time, end_time, subject) VALUES (%s, %s, %s, %s, %s);'
-        # try:
-        #     result = app.db_driver.execute(sql, (classroom_id, user_email, start_time, end_time, subject))
-        #     app.db_driver.commit()
-        
         try:
             app.database.execute(text('''
             INSERT INTO reservations (classroom_id, user_email, start_time, end_time, subject) VALUES ( :classroom_id, :user_email, :start_time, :end_time, :subject);
@@ -217,9 +183,6 @@ class PUTReservations(Resource):
         claims = get_jwt_claims()
 
         # Get target reservation
-        # sql = 'SELECT count(user_email) "count", user_email FROM reservations WHERE id=%s;'
-        # try:
-        #     result = app.db_driver.execute_one(sql, (reservation_id))
         try:
             result = app.database.execute(text('''
             SELECT count(user_email) count, user_email 
@@ -270,13 +233,6 @@ class PUTReservations(Resource):
                 return error_response(400, 'subject를 전달해주세요.')
         except Exception as exc:
             return error_response(400, 'JSON 파싱 에러가 발생했습니다 : ' + str(exc))
-        # is_available
-        # sql = '''
-        #     SELECT start_time, end_time
-        #     FROM reservations
-        #     WHERE classroom_id = %s
-        # '''
-        # rows = app.db_driver.execute_all(sql,(classroom_id))
         targetTuple = (start_time, end_time)
         originTuple = [origin_start_time, origin_end_time]
         timeList = []
@@ -298,10 +254,6 @@ class PUTReservations(Resource):
             return error_response(400, '예약 불가능한 시간입니다.')
  
         # Querying
-        # sql = 'UPDATE reservations SET start_time=%s, end_time=%s, classroom_id=%s, subject=%s WHERE id=%s;'
-        # try:
-        #     app.db_driver.execute(sql, (start_time, end_time, classroom_id, subject, reservation_id))
-        #     app.db_driver.commit()
         try:
             app.database.execute(text('''
             UPDATE reservations SET start_time= :start_time, end_time= :end_time, classroom_id= :classroom_id, subject= :subject WHERE id= :reservation_id;
@@ -326,9 +278,6 @@ class DELETEReservations(Resource):
         claims = get_jwt_claims()
 
         # Get target reservation
-        # sql = 'SELECT count(user_email) "count", user_email FROM reservations WHERE id=%s;'
-        # try:
-        #     result = app.db_driver.execute_one(sql, (reservation_id))
         try:
             result = app.database.execute(text('''
             SELECT count(user_email) count, user_email 
@@ -348,10 +297,6 @@ class DELETEReservations(Resource):
                 return error_response(403, "관리자 혹은 예약 당사자만 취소가 가능합니다.")
 
         # Querying
-        # sql = 'DELETE FROM reservations WHERE id=%s;'
-        # try:
-        #     result = app.db_driver.execute(sql, (reservation_id))
-        #     app.db_driver.commit()
         try:
             result = app.database.execute(text('''
             DELETE FROM reservations 
@@ -404,12 +349,6 @@ class POSTReservations2(Resource):
                 if tmpEmail not in emailList:
                     return error_response(400, '유효하지 않은 이메일입니다.')
             # is_available
-            # sql = '''
-            #     SELECT start_time, end_time
-            #     FROM reservations
-            #     WHERE classroom_id = %s
-            # '''
-            # rows = app.db_driver.execute_all(sql,(tmpClassroom_id))
             rows = app.database.execute(text('''
             SELECT start_time, end_time
             FROM reservations
@@ -427,11 +366,6 @@ class POSTReservations2(Resource):
             if available == False:
                 return error_response(400, '예약 불가능한 시간입니다.')
         # Insert Querying
-        # sql = '''INSERT INTO reservations (classroom_id, user_email, start_time, end_time, subject) VALUES (%s,%s,%s,%s,%s),(%s,%s,%s,%s,%s);'''
-        # try:
-        #     result = app.db_driver.execute(sql, (queryList[0][0], queryList[0][1], queryList[0][2], queryList[0][3], queryList[0][4],
-        #     queryList[1][0], queryList[1][1], queryList[1][2], queryList[1][3], queryList[1][4]))
-        #     app.db_driver.commit()
         try:
             result = app.database.execute(text('''
             INSERT INTO reservations (classroom_id, user_email, start_time, end_time, subject) 

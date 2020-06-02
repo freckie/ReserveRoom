@@ -25,7 +25,8 @@ export default new Vuex.Store({
     refreshToken: null,
     userEmail: null,
     userName: null,
-    userLevel: null
+    userLevel: null,
+    accessTokenExpiry: null
   },
   getters: {
     getHost: state => {
@@ -52,7 +53,8 @@ export default new Vuex.Store({
         refreshToken,
         userEmail,
         userName,
-        userLevel
+        userLevel,
+        accessTokenExpiry
       }
     ) {
       state.accessToken = accessToken
@@ -60,6 +62,7 @@ export default new Vuex.Store({
       state.userEmail = userEmail
       state.userName = userName
       state.userLevel = userLevel
+      state.accessTokenExpiry = accessTokenExpiry
     },
     LOGOUT (state) {
       state.accessToken = null
@@ -67,6 +70,7 @@ export default new Vuex.Store({
       state.userEmail = null
       state.userName = null
       state.userLevel = null
+      state.accessTokenExpiry = null
     }
   },
   actions: {
@@ -94,7 +98,8 @@ export default new Vuex.Store({
             refreshToken: data.refresh_token,
             userEmail: userClaims.email,
             userName: userClaims.name,
-            userLevel: userClaims.level
+            userLevel: userClaims.level,
+            accessTokenExpiry: atoken.exp
           })
         })
     },
@@ -123,7 +128,8 @@ export default new Vuex.Store({
             refreshToken: data.refresh_token,
             userEmail: userClaims.email,
             userName: userClaims.name,
-            userLevel: userClaims.level
+            userLevel: userClaims.level,
+            accessTokenExpiry: atoken.exp
           })
         })
         .catch(error => {

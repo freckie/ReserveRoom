@@ -1,8 +1,12 @@
 <template>
   <v-toolbar id="top-toolbar" dense align-center>
     <!-- Back -->
-    <v-btn icon>
-      <v-icon>mdi-arrow-left</v-icon>
+    <v-btn
+      color="#891a2b"
+      text
+      @click="refresh"
+    >
+      세션 만료까지 {{ tokenExpiryDiffStr }}
     </v-btn>
 
     <!-- Centered Logo -->
@@ -39,18 +43,79 @@ export default {
   },
   created () {
     this.loadUserData()
+
+    // 세션 시간 표시 타이머
+    this.startTimer()
+    this.$store.watch(
+      () => this.$store.getters.getAccessToken,
+      accessToken => {
+        if (accessToken !== null) {
+          this.clearTimer()
+          this.startTimer()
+        }
+      }
+    )
   },
   data: () => {
     return {
       user: {
         name: ''
-      }
+      },
+      tokenExpiryDiffStr: '',
+      timer: null
     }
   },
   methods: {
+    refresh () {
+      var refreshToken = this.$store.getters.getRefreshToken
+      this.$store.dispatch('REFRESH', { refreshToken })
+    },
     loadUserData () {
       var user = this.$store.getters.getUserInfo
       this.user.name = user.name
+    },
+    startTimer () {
+      if (this.$store.state.accessToken !== null) {
+        var vm = this
+
+        var expiry = this.$store.state.accessTokenExpiry
+        var target = this.$moment.unix(expiry)
+        var now = this.$moment(new Date()).unix() * 1000
+        var diff = target.diff(now) / 1000
+
+        this.timer = setInterval(function () {
+          vm.tokenExpiryDiffStr = vm.makeTimeFormat(diff)
+          diff -= 1
+
+          if (diff < 1) {
+            clearInterval(vm.timer)
+            alert('로그인 세션이 만료되었습니다.')
+            vm.$router.push('/signin')
+          }
+        }, 1000)
+      }
+    },
+    clearTimer () {
+      clearInterval(this.timer)
+    },
+    makeTimeFormat (sec) {
+      var seconds = sec % 60
+      var minutes = (sec - seconds) / 60
+
+      var result = ''
+      if (minutes < 10) {
+        result += '0' + minutes
+      } else {
+        result += String(minutes)
+      }
+
+      if (seconds < 10) {
+        result += ':0' + seconds
+      } else {
+        result += ':' + seconds
+      }
+
+      return result
     }
   }
 }

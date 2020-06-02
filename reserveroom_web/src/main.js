@@ -6,8 +6,11 @@ import axios from 'axios'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import '@mdi/font/css/materialdesignicons.css'
+import moment from 'moment'
+import VueMomentJS from 'vue-momentjs'
 
 Vue.use(Vuetify)
+Vue.use(VueMomentJS, moment)
 
 Vue.config.productionTip = false
 

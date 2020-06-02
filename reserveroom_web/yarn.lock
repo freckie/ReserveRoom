@@ -8625,6 +8625,11 @@ vue-moment@^4.1.0:
   dependencies:
     moment "^2.19.2"
 
+vue-momentjs@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/vue-momentjs/-/vue-momentjs-0.1.2.tgz#db517335df0b21402df9c65d8c7a86833d42f32f"
+  integrity sha512-gtUc5BIo2nPku4gxGDqAa9sWRjn7Utpp22+Fqrd9dMEeLYo+9NGiJ0XBUXh3hmKbAXj+kWuFklJX+BBUfeEjQA==
+
 vue-router@^3.1.6:
   version "3.1.6"
   resolved "https://registry.npm.taobao.org/vue-router/download/vue-router-3.1.6.tgz#45f5a3a3843e31702c061dd829393554e4328f89"

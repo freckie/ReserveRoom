@@ -288,6 +288,7 @@ export default {
             })
           .then(res => {
             alert('예약 신청이 성공했습니다.')
+            vm._clearForm()
             vm._loadRoomReservations(vm.roomData.id)
           })
           .catch(error => {
@@ -295,7 +296,7 @@ export default {
             alert('예약 신청이 실패했습니다 : ' + error.response.data.message)
           })
         vm.sending = false
-      }, 1000)
+      }, 500)
     },
     updateReservation () {
       if (this.sending) {
@@ -358,7 +359,7 @@ export default {
             vm._loadMyReservation(vm.reservation.reservationID)
           })
         vm.sending = false
-      }, 1000)
+      }, 500)
     },
     deleteReservation () {
       if (this.sending) {
@@ -403,7 +404,7 @@ export default {
             vm._loadMyReservation(vm.reservation.reservationID)
           })
         vm.sending = false
-      }, 1000)
+      }, 500)
     },
     _clearForm () {
       this.reservation.subject = null

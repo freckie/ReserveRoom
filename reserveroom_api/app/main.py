@@ -11,7 +11,7 @@ def load_config(filename):
 config = load_config('./config.json')
 
 # Initialize Flask app
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -35,6 +35,15 @@ from flask_jwt_extended import JWTManager
 jwt_manager = JWTManager(app)
 app.jwt_manager = jwt_manager
 
+@jwt_manager.expired_token_loader
+def my_expired_token_callback(expired_token):
+    return jsonify({
+        'status': 401,
+        'sub_status': 42,
+        'msg': '세션이 만료되었습니다.'
+    }), 401
+
+@jwt_manager.
 # API
 from api_app.api import build_api
 build_api(app)

@@ -276,23 +276,26 @@ export default {
 
       // Request
       var token = this.$store.getters.getAccessToken
-      this.$http
-        .post(
-          url, params, {
-            headers: {
-              Authorization: 'Bearer ' + token,
-              'Content-Type': 'application/json'
-            }
+      var vm = this
+      setTimeout(function () {
+        vm.$http
+          .post(
+            url, params, {
+              headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+              }
+            })
+          .then(res => {
+            alert('예약 신청이 성공했습니다.')
+            vm._loadRoomReservations(vm.roomData.id)
           })
-        .then(res => {
-          alert('예약 신청이 성공했습니다.')
-          this._loadRoomReservations(this.roomData.id)
-        })
-        .catch(error => {
-          console.log(error.response)
-          alert('예약 신청이 실패했습니다 : ' + error.response.data.message)
-        })
-      this.sending = false
+          .catch(error => {
+            console.log(error.response)
+            alert('예약 신청이 실패했습니다 : ' + error.response.data.message)
+          })
+        vm.sending = false
+      }, 1000)
     },
     updateReservation () {
       if (this.sending) {
@@ -334,25 +337,28 @@ export default {
 
       // Request
       var token = this.$store.getters.getAccessToken
-      this.$http
-        .put(
-          url, params, {
-            headers: {
-              Authorization: 'Bearer ' + token,
-              'Content-Type': 'application/json'
-            }
+      var vm = this
+      setTimeout(function () {
+        vm.$http
+          .put(
+            url, params, {
+              headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+              }
+            })
+          .then(res => {
+            alert('기존 예약 수정이 성공했습니다.')
+            vm._loadRoomReservations(vm.roomData.id)
           })
-        .then(res => {
-          alert('기존 예약 수정이 성공했습니다.')
-          this._loadRoomReservations(this.roomData.id)
-        })
-        .catch(error => {
-          console.log(error.response)
-          alert('기존 예약 수정이 실패했습니다 : ' + error.response.data.message)
-          this._clearForm()
-          this._loadMyReservation(this.reservation.reservationID)
-        })
-      this.sending = false
+          .catch(error => {
+            console.log(error.response)
+            alert('기존 예약 수정이 실패했습니다 : ' + error.response.data.message)
+            vm._clearForm()
+            vm._loadMyReservation(vm.reservation.reservationID)
+          })
+        vm.sending = false
+      }, 1000)
     },
     deleteReservation () {
       if (this.sending) {
@@ -374,25 +380,30 @@ export default {
 
       // Request
       var token = this.$store.getters.getAccessToken
-      this.$http
-        .delete(
-          url, {
-            headers: {
-              Authorization: 'Bearer ' + token,
-              'Content-Type': 'application/json'
-            }
-          }, {})
-        .then(res => {
-          alert('예약 삭제에 성공했습니다.')
-          this._loadRoomReservations(this.roomData.id)
-        })
-        .catch(error => {
-          console.log(error.response)
-          alert('기존 예약 삭제에 실패했습니다 : ' + error.response.data.message)
-          this._clearForm()
-          this._loadMyReservation(this.reservation.reservationID)
-        })
-      this.sending = false
+      var vm = this
+      setTimeout(function () {
+        vm.$http
+          .delete(
+            url, {
+              headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+              }
+            }, {})
+          .then(res => {
+            alert('예약 삭제에 성공했습니다.')
+            vm._loadRoomReservations(vm.roomData.id)
+            vm.sending = false
+            vm.$forceUpdate()
+          })
+          .catch(error => {
+            console.log(error.response)
+            alert('기존 예약 삭제에 실패했습니다 : ' + error.response.data.message)
+            vm._clearForm()
+            vm._loadMyReservation(vm.reservation.reservationID)
+          })
+        vm.sending = false
+      }, 1000)
     },
     _clearForm () {
       this.reservation.subject = null

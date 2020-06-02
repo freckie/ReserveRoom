@@ -399,7 +399,7 @@ export default {
             alert('예약 삭제에 성공했습니다. 페이지가 새로고침됩니다.')
             vm._loadRoomReservations(vm.roomData.id)
             vm.sending = false
-            vm.$forceUpdate()
+            vm.$router.go()
           })
           .catch(error => {
             console.log(error.response)

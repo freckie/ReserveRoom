@@ -137,7 +137,7 @@ class POSTSignup(Resource):
         # Querying
         # query = 'INSERT INTO users (email, name) VALUES (%s, %s);'
         try:
-            result = app.database.execute(text('''
+            app.database.execute(text('''
                 INSERT INTO users (email, name) 
                 VALUES (:email, :name)
             '''),{

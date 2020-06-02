@@ -226,7 +226,7 @@ class PUTReservations(Resource):
             FROM reservations WHERE id= :reservation_id
             '''),{
             'reservation_id' : reservation_id
-            }).fetchall()
+            }).fetchone()
         except Exception as exc:
             return error_response(404, "해당 예약 건을 찾을 수 없습니다. " + str(exc))
         if result['count'] == 0:
@@ -339,12 +339,12 @@ class DELETEReservations(Resource):
             }).fetchone()
         except Exception as exc:
             return error_response(404, "해당 예약 건을 찾을 수 없습니다. " + str(exc))
-        if result[0] == 0:
+        if result['count'] == 0:
             return error_response(404, "해당 예약 건을 찾을 수 없습니다.")
 
         # Check level
         if claims['level'] != 9:
-            if claims['email'] != result[1]:
+            if claims['email'] != result['user_email']:
                 return error_response(403, "관리자 혹은 예약 당사자만 취소가 가능합니다.")
 
         # Querying

@@ -173,10 +173,12 @@ export default {
           { id: '2020-06-26', value: '6/26 (금)' }
         ],
         times: []
-      }
+      },
+      sending: false
     }
   },
   created () {
+    this.sending = false
     this.show = false
     this.createTimeItems()
   },
@@ -222,6 +224,11 @@ export default {
       }
     },
     createReservation () {
+      if (this.sending) {
+        return
+      }
+
+      this.sending = true
       // Check all parameters valid
       if (
         this.reservation.subject === '' || this.reservation.subject === null ||
@@ -277,24 +284,33 @@ export default {
 
       // Request
       var token = this.$store.getters.getAccessToken
-      this.$http
-        .post(
-          url, params, {
-            headers: {
-              Authorization: 'Bearer ' + token,
-              'Content-Type': 'application/json'
-            }
+      var vm = this
+      setTimeout(function () {
+        vm.$http
+          .post(
+            url, params, {
+              headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+              }
+            })
+          .then(res => {
+            alert('예약 신청이 성공했습니다.')
+            vm._loadRoomReservations(vm.roomData.id)
           })
-        .then(res => {
-          alert('예약 신청이 성공했습니다.')
-          this._loadRoomReservations(this.roomData.id)
-        })
-        .catch(error => {
-          console.log(error.response)
-          alert('예약 신청이 실패했습니다 : ' + error.response.data.message)
-        })
+          .catch(error => {
+            console.log(error.response)
+            alert('예약 신청이 실패했습니다 : ' + error.response.data.message)
+          })
+        vm.sending = false
+      }, 1000)
     },
     updateReservation () {
+      if (this.sending) {
+        return
+      }
+
+      this.sending = true
       // Check all parameters valid
       if (
         this.reservation.subject === '' || this.reservation.subject === null ||
@@ -327,26 +343,35 @@ export default {
 
       // Request
       var token = this.$store.getters.getAccessToken
-      this.$http
-        .put(
-          url, params, {
-            headers: {
-              Authorization: 'Bearer ' + token,
-              'Content-Type': 'application/json'
-            }
+      var vm = this
+      setTimeout(function () {
+        vm.$http
+          .put(
+            url, params, {
+              headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+              }
+            })
+          .then(res => {
+            alert('기존 예약 수정이 성공했습니다.')
+            vm._loadRoomReservations(vm.roomData.id)
           })
-        .then(res => {
-          alert('기존 예약 수정이 성공했습니다.')
-          this._loadRoomReservations(this.roomData.id)
-        })
-        .catch(error => {
-          console.log(error.response)
-          alert('기존 예약 수정이 실패했습니다 : ' + error.response.data.message)
-          this._clearForm()
-          this._loadMyReservation(this.reservation.reservationID)
-        })
+          .catch(error => {
+            console.log(error.response)
+            alert('기존 예약 수정이 실패했습니다 : ' + error.response.data.message)
+            vm._clearForm()
+            vm._loadMyReservation(vm.reservation.reservationID)
+          })
+        this.sending = false
+      }, 1000)
     },
     deleteReservation () {
+      if (this.sending) {
+        return
+      }
+
+      this.sending = true
       // Check
       var result = prompt('예약이 삭제됩니다.\n계속 진행하시려면 "삭제"를 입력해주세요.')
       if (result !== '삭제') {
@@ -360,25 +385,30 @@ export default {
 
       // Request
       var token = this.$store.getters.getAccessToken
-      this.$http
-        .delete(
-          url, {
-            headers: {
-              Authorization: 'Bearer ' + token,
-              'Content-Type': 'application/json'
-            }
-          }, {})
-        .then(res => {
-          alert('예약 삭제에 성공했습니다. 페이지가 새로고침됩니다.')
-          this._loadRoomReservations(this.roomData.id)
-          this.$router.go(0)
-        })
-        .catch(error => {
-          console.log(error.response)
-          alert('기존 예약 삭제에 실패했습니다 : ' + error.response.data.message)
-          this._clearForm()
-          this._loadMyReservation(this.reservation.reservationID)
-        })
+      var vm = this
+      setTimeout(function () {
+        vm.$http
+          .delete(
+            url, {
+              headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+              }
+            }, {})
+          .then(res => {
+            alert('예약 삭제에 성공했습니다. 페이지가 새로고침됩니다.')
+            vm._loadRoomReservations(vm.roomData.id)
+            vm.sending = false
+            vm.$forceUpdate()
+          })
+          .catch(error => {
+            console.log(error.response)
+            alert('기존 예약 삭제에 실패했습니다 : ' + error.response.data.message)
+            vm._clearForm()
+            vm._loadMyReservation(vm.reservation.reservationID)
+          })
+        vm.sending = false
+      }, 1000)
     },
     _clearForm () {
       this.reservation.subject = null

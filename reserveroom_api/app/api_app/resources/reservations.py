@@ -168,7 +168,7 @@ class POSTReservations(Resource):
                 'start_time' : start_time,
                 'end_time' : end_time,
                 'subject' : subject
-            }).fetchall()
+            })
         except Exception as exc:
             return error_response(500, str(exc))
 

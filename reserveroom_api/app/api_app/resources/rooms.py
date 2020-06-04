@@ -25,7 +25,7 @@ class GETRooms(Resource):
         if 'capacity' in request.args:
             params['capacity'] = request.args['capacity']
         _college_id = params['college_id']
-        _capacity = params['capacity']
+        _capacity = int(params['capacity'])
 
         # Querying
         query = '''
@@ -44,7 +44,6 @@ class GETRooms(Resource):
         # rows = app.db_driver.execute_all(query)
         rows = app.database.execute(text(query),{
         }).fetchall()
-
         class_dict = {}
         name_list = []
         #호수별 인원수 저장

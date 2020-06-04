@@ -1,7 +1,7 @@
 db = {
     'user'     : 'root',
     'password' : 'dasomDASOM',
-    'host'     : '15.164.93.91',
+    'host'     : '52.79.91.175',
     'port'     : 3306,
     'database' : 'reserveroom'
 }

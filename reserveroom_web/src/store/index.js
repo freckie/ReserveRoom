@@ -9,7 +9,7 @@ Vue.use(Vuex)
 // JWT
 var jwtDecode = require('jwt-decode')
 
-const resourceHost = 'http://15.164.93.91:8000'
+const resourceHost = 'http://52.79.91.175:8000'
 
 export default new Vuex.Store({
   plugins: [

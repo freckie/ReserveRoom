@@ -160,6 +160,7 @@ export default {
         endTime: null,
         reservationID: null, // for update
         origin: { // for update
+          date: null,
           startTime: null,
           endTime: null
         }
@@ -298,14 +299,14 @@ export default {
             })
           .then(res => {
             alert('예약 신청이 성공했습니다. 반드시 내 예약 현황 조희를 통해 확인해주세요.')
-            this.sending = false
+            vm.sending = false
             vm._clearForm()
             vm._loadRoomReservations(vm.roomData.id)
           })
           .catch(error => {
             console.log(error.response)
             alert('예약 신청이 실패했습니다 : ' + error.response.data.message)
-            this.sending = false
+            vm.sending = false
           })
         vm.sending = false
       }, 500)
@@ -343,8 +344,8 @@ export default {
         classroom_id: this.roomData.id,
         start_time: this.reservation.date + ' ' + this.reservation.startTime,
         end_time: this.reservation.date + ' ' + this.reservation.endTime,
-        origin_start_time: this.reservation.date + ' ' + this.reservation.origin.startTime,
-        origin_end_time: this.reservation.date + ' ' + this.reservation.origin.endTime,
+        origin_start_time: this.reservation.origin.date + ' ' + this.reservation.origin.startTime,
+        origin_end_time: this.reservation.origin.date + ' ' + this.reservation.origin.endTime,
         subject: this.reservation.subject
       }
 
@@ -362,17 +363,17 @@ export default {
             })
           .then(res => {
             alert('기존 예약 수정이 성공했습니다.')
-            this.sending = false
+            vm.sending = false
             vm._loadRoomReservations(vm.roomData.id)
           })
           .catch(error => {
             console.log(error.response)
             alert('기존 예약 수정이 실패했습니다 : ' + error.response.data.message)
-            this.sending = false
+            vm.sending = false
             vm._clearForm()
             vm._loadMyReservation(vm.reservation.reservationID)
           })
-        this.sending = false
+        vm.sending = false
       }, 500)
     },
     deleteReservation () {
@@ -406,15 +407,15 @@ export default {
               }
             }, {})
           .then(res => {
-            alert('예약 삭제에 성공했습니다. 페이지를 다시 로딩해주세요.')
-            this.sending = false
-            vm._loadRoomReservations(vm.roomData.id)
+            alert('예약 삭제에 성공했습니다. 페이지가 다시 로딩됩니다.')
             vm.sending = false
+            vm._loadRoomReservations(vm.roomData.id)
+            vm.$router.go()
           })
           .catch(error => {
             console.log(error.response)
             alert('기존 예약 삭제에 실패했습니다 : ' + error.response.data.message)
-            this.sending = false
+            vm.sending = false
             vm._clearForm()
             vm._loadMyReservation(vm.reservation.reservationID)
           })
@@ -488,6 +489,7 @@ export default {
           this.reservation.startTime = data.start_time.split(' ')[1]
           this.reservation.endTime = data.end_time.split(' ')[1]
           this.reservation.reservationID = reservationID
+          this.reservation.origin.date = this.reservation.date
           this.reservation.origin.startTime = this.reservation.startTime
           this.reservation.origin.endTime = this.reservation.endTime
         })

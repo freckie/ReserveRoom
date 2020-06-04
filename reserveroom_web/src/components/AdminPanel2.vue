@@ -108,7 +108,6 @@
     <!-- Timetable -->
     <v-card
       class="panel2-card"
-      v-show="mode==='new'"
     >
       <v-toolbar color="#891a2b" dark>
         <v-card-title>{{ roomData.id }}호 예약 현황</v-card-title>
@@ -161,6 +160,7 @@ export default {
         endTime: null,
         reservationID: null, // for update
         origin: { // for update
+          date: null,
           startTime: null,
           endTime: null
         }
@@ -337,8 +337,8 @@ export default {
         classroom_id: this.roomData.id,
         start_time: this.reservation.date + ' ' + this.reservation.startTime,
         end_time: this.reservation.date + ' ' + this.reservation.endTime,
-        origin_start_time: this.reservation.date + ' ' + this.reservation.origin.startTime,
-        origin_end_time: this.reservation.date + ' ' + this.reservation.origin.endTime,
+        origin_start_time: this.reservation.origin.date + ' ' + this.reservation.origin.startTime,
+        origin_end_time: this.reservation.origin.date + ' ' + this.reservation.origin.endTime,
         subject: this.reservation.subject
       }
 
@@ -484,8 +484,14 @@ export default {
           this.reservation.startTime = data.start_time.split(' ')[1]
           this.reservation.endTime = data.end_time.split(' ')[1]
           this.reservation.reservationID = reservationID
+          this.reservation.origin.date = this.reservation.origin
           this.reservation.origin.startTime = this.reservation.startTime
           this.reservation.origin.endTime = this.reservation.endTime
+
+          // room counts
+          this.roomData.count = this.roomData.id.split(' ').length
+
+          this._loadRoomReservations(this.roomData.id)
         })
         .catch(error => {
           console.log(error.response)

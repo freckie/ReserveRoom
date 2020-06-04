@@ -108,7 +108,6 @@
     <!-- Timetable -->
     <v-card
       class="panel2-card"
-      v-show="mode==='new'"
     >
       <v-toolbar color="#891a2b" dark>
         <v-card-title>{{ roomData.id }}호 예약 현황</v-card-title>
@@ -492,6 +491,11 @@ export default {
           this.reservation.origin.date = this.reservation.date
           this.reservation.origin.startTime = this.reservation.startTime
           this.reservation.origin.endTime = this.reservation.endTime
+
+          // room counts
+          this.roomData.count = this.roomData.id.split(' ').length
+
+          this._loadRoomReservations(this.roomData.id)
         })
         .catch(error => {
           console.log(error.response)

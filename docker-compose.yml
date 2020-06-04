@@ -22,8 +22,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ${PWD}/reserveroom_web/public:/srv/www/static
-      - ${PWD}/nginx:/etc/nginx/conf.d
+      - /home/ubuntu/room/ReserveRoom/reserveroom_web/public:/srv/www/static
+      - /home/ubuntu/room/ReserveRoom/nginx:/etc/nginx/conf.d
     depends_on:
       - web.api
       - web.front

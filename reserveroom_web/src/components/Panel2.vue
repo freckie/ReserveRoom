@@ -237,12 +237,14 @@ export default {
         this.reservation.date === '' || this.reservation.date === null
       ) {
         alert('입력이 제대로 됐는지 다시 확인 부탁드립니다.')
+        this.sending = false
         return
       }
 
       // Check time is valid
       if (!this._checkTimeValidation(this.reservation.startTime, this.reservation.endTime)) {
         alert('시간 입력이 잘못되었습니다.')
+        this.sending = false
         return
       }
 
@@ -296,12 +298,14 @@ export default {
             })
           .then(res => {
             alert('예약 신청이 성공했습니다.')
+            this.sending = false
             vm._clearForm()
             vm._loadRoomReservations(vm.roomData.id)
           })
           .catch(error => {
             console.log(error.response)
             alert('예약 신청이 실패했습니다 : ' + error.response.data.message)
+            this.sending = false
           })
         vm.sending = false
       }, 500)
@@ -320,12 +324,14 @@ export default {
         this.reservation.date === '' || this.reservation.date === null
       ) {
         alert('입력이 제대로 됐는지 다시 확인 부탁드립니다.')
+        this.sending = false
         return
       }
 
       // Check time is valid
       if (!this._checkTimeValidation(this.reservation.startTime, this.reservation.endTime)) {
         alert('시간 입력이 잘못되었습니다.')
+        this.sending = false
         return
       }
 
@@ -356,11 +362,13 @@ export default {
             })
           .then(res => {
             alert('기존 예약 수정이 성공했습니다.')
+            this.sending = false
             vm._loadRoomReservations(vm.roomData.id)
           })
           .catch(error => {
             console.log(error.response)
             alert('기존 예약 수정이 실패했습니다 : ' + error.response.data.message)
+            this.sending = false
             vm._clearForm()
             vm._loadMyReservation(vm.reservation.reservationID)
           })
@@ -377,6 +385,7 @@ export default {
       var result = prompt('예약이 삭제됩니다.\n계속 진행하시려면 "삭제"를 입력해주세요.')
       if (result !== '삭제') {
         alert('잘못 입력하셨습니다.')
+        this.sending = false
         return
       }
 
@@ -398,6 +407,7 @@ export default {
             }, {})
           .then(res => {
             alert('예약 삭제에 성공했습니다. 페이지가 새로고침됩니다.')
+            this.sending = false
             vm._loadRoomReservations(vm.roomData.id)
             vm.sending = false
             vm.$router.go()
@@ -405,6 +415,7 @@ export default {
           .catch(error => {
             console.log(error.response)
             alert('기존 예약 삭제에 실패했습니다 : ' + error.response.data.message)
+            this.sending = false
             vm._clearForm()
             vm._loadMyReservation(vm.reservation.reservationID)
           })

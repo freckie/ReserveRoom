@@ -23,7 +23,7 @@ services:
       - "80:80"
     volumes:
       - /home/ubuntu/room/ReserveRoom/reserveroom_web/public:/srv/www/static
-      - /home/ubuntu/room/ReserveRoom/nginx:/etc/nginx/conf.d
+      - /home/ubuntu/room/ReserveRoom/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - web.api
       - web.front

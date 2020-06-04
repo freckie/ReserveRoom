@@ -11,10 +11,7 @@ services:
     build: './reserveroom_web'
     container_name: web.front
     ports:
-      - "8080:8080"
-    environment:
-      - NODE_ENV=production
-      - PORT=8080
+      - "8080:80"
 
   nginx:
     container_name: nginx

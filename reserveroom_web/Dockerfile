@@ -1,6 +1,4 @@
-FROM node:lts-alpine
-
-RUN npm install -g http-server
+FROM node:lts-alpine as build-stage
 
 WORKDIR /app
 
@@ -10,6 +8,10 @@ RUN npm install
 COPY . .
 RUN yarn build
 
-EXPOSE 8080
+FROM nginx:stable-alpine as production-stage
+RUN rm /etc/nginx/conf.d/default.conf
+COPY ./nginx/homepage.conf /etc/nginx/conf.d/homepage.conf
 
-CMD ["http-server", "dist"]
+COPY --from=build-stage ./homepage/dist /usr/share/nginx/html/homepage
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

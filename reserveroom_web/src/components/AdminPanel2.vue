@@ -289,7 +289,7 @@ export default {
               }
             })
           .then(res => {
-            alert('예약 신청이 성공했습니다.')
+            alert('예약 신청이 성공했습니다. 반드시 예약현황 조회를 해주세요.')
             vm._clearForm()
             vm._loadRoomReservations(vm.roomData.id)
           })
@@ -397,11 +397,10 @@ export default {
               }
             }, {})
           .then(res => {
-            alert('예약 삭제에 성공했습니다. 페이지가 새로고침됩니다.')
+            alert('예약 삭제에 성공했습니다. 페이지를 다시 로딩해주세요.')
             this.sending = false
             vm._loadRoomReservations(vm.roomData.id)
             vm.sending = false
-            vm.$router.go()
           })
           .catch(error => {
             console.log(error.response)

@@ -484,7 +484,7 @@ export default {
           this.reservation.startTime = data.start_time.split(' ')[1]
           this.reservation.endTime = data.end_time.split(' ')[1]
           this.reservation.reservationID = reservationID
-          this.reservation.origin.date = this.reservation.origin
+          this.reservation.origin.date = this.reservation.date
           this.reservation.origin.startTime = this.reservation.startTime
           this.reservation.origin.endTime = this.reservation.endTime
 

@@ -97,7 +97,6 @@ class POSTResetPW(Resource):
         try:
             app.database.execute(text('''
             UPDATE users SET password= :password, level= :level WHERE email= :email
-            FROM users WHERE email= :email
             '''),{
             'password' : hashed,
             'level' : new_level,
